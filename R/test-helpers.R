@@ -19,13 +19,15 @@ make_unsubscribe_report_fixtures <- function() {
   saveRDS(report,rprojroot::find_testthat_root_file("unsubscribe_report.Rds"))
 }
 
-make_contributions_model_fixtures <- function(n = 10000) {
+make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
 
   withr::local_envvar(R_CONFIG_FILE="")
 
-  stream <- read_cache("stream","stream")
+  if (rebuild)
+    contributions_dataset(rebuild_dataset = T)
 
-  fixture <- stream %>% dplyr::slice_sample(n = n) %>%
+  fixture <- read_cache("dataset","contributions_model") %>%
+    dplyr::slice_sample(n = n) %>%
     collect %>% setDT
 
   # anonymize
