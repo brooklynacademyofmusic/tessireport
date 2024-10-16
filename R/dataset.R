@@ -24,7 +24,7 @@ dataset_chunk_write <- function(dataset, partition,
 
   . <- group_customer_no <- timestamp <- NULL
 
-  assert_names(colnames(dataset), must.include = c("timestamp",cols))
+  assert_names(names(dataset), must.include = c("timestamp",cols))
   assert_vector(partition, len = 1)
   assert_character(dataset_name, len = 1)
   assert_data_table(rows)
