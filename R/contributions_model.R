@@ -29,7 +29,7 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
       return(dataset %>% filter(date >= since & date < until))
   }
 
-  stream <- read_cache("stream","stream")
+  stream <- read_cache("stream", "stream", include_partition = TRUE)
   stream_key <- stream %>%
     select(all_of(c("group_customer_no","timestamp","event_type","contribution_amt"))) %>%
     collect %>% setDT

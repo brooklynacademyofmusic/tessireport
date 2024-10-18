@@ -7,14 +7,15 @@
 #' the regular expression in `rollback` are rolled back one row, and all timestamps are normalized
 #' by [dataset_normalize_timestamps].
 #'
-#' @param dataset `data.frameish` dataset to load from, must contain an index column
+#' @param dataset `data.frameish` dataset to load from, must contain an index column and cannot
+#' be an arrow_dplyr_query
 #' @param partition `character`|`integer` identifying the partition the chunk will be saved in
 #' @param dataset_name `character` cache directory where the partition will be saved in
 #' @param rows [data.table] identifying rows of the dataset to load; will be appended to dataset
 #' @param cols `character` columns of the dataset to add to partition
 #' @inheritDotParams dataset_rollback_event by event rollback_cols
 #' @inheritDotParams dataset_normalize_timestamps timestamp_cols
-#' @importFrom checkmate assert_vector
+#' @importFrom checkmate assert_names assert_false test_class assert_vector assert_character assert_data_table
 #' @return NULL
 dataset_chunk_write <- function(dataset, partition,
                                 dataset_name,
@@ -25,6 +26,7 @@ dataset_chunk_write <- function(dataset, partition,
   . <- group_customer_no <- timestamp <- NULL
 
   assert_names(names(dataset), must.include = c("timestamp",cols))
+  assert_false(test_class(dataset,"arrow_dplyr_query"))
   assert_vector(partition, len = 1)
   assert_character(dataset_name, len = 1)
   assert_data_table(rows)

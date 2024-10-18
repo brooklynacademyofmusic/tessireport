@@ -14,7 +14,8 @@ dataset_chunk_write(
 )
 }
 \arguments{
-\item{dataset}{\code{data.frameish} dataset to load from, must contain an index column}
+\item{dataset}{\code{data.frameish} dataset to load from, must contain an index column and cannot
+be an arrow_dplyr_query}
 
 \item{partition}{\code{character}|\code{integer} identifying the partition the chunk will be saved in}
 
