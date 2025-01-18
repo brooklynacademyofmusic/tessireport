@@ -36,7 +36,7 @@ read.sql_report <- function(sql_report, query, ...) {
   expect_character(query, len = 1)
 
   # compute args from the formals of `read_sql` and `...` plus `query` and enforcing non-incremental loads
-  args <- modifyList(rlang::list2(...), list(query=query, incremental=FALSE)) %>%
+  args <- modifyList(rlang::list2(...), list(query=query, incremental=FALSE, overwrite=TRUE)) %>%
     .[intersect(names(.), rlang::fn_fmls_names(tessilake::read_sql))]
 
   sql_report$data <- do.call(read_sql,args) %>% collect %>% setDT
