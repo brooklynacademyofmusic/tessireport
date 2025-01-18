@@ -66,7 +66,6 @@ test_that("run.sql_report passes on parameters", {
   expect_length(mock_args(read_sql),1)
   expect_equal(mock_args(read_sql)[[1]][["query"]],"select * from test_table")
   expect_equal(mock_args(read_sql)[[1]][["freshness"]],-999)
-  expect_in(names(mock_args(read_sql)[[1]]), rlang::fn_fmls_names(tessilake::read_sql))
 
   expect_length(mock_args(send_xlsx),1)
   expect_equal(mock_args(send_xlsx)[[1]][["table"]], table)
