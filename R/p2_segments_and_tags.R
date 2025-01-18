@@ -33,6 +33,7 @@ read.p2_segments_and_tags <- function(data, ...) {
 #' @export
 #' @describeIn p2_segments_and_tags filter Prospect2 segments and tags
 process.p2_segments_and_tags <- function(data,
+                                         n = 50,
                                          segment_regex = "^Segment of",
                                          tag_regex = "(?!.*RSVP|.*\\(Keep\\))\\d{6,}", ...) {
 
@@ -40,9 +41,9 @@ process.p2_segments_and_tags <- function(data,
 
   data$segments <- data$segments[grepl(segment_regex,name, perl = T) &
                                    seriesid == 0 & hidden == 0,
-                                 .(id,name,created_timestamp)] %>% first(50)
+                                 .(id,name,created_timestamp)] %>% first(n)
   data$tags <- data$tags[grepl(tag_regex,tag, perl = T),
-                         .(id,tag,created_timestamp)] %>% first(50)
+                         .(id,tag,created_timestamp)] %>% first(n)
 
   NextMethod()
 }
