@@ -17,6 +17,7 @@ p2_segments_and_tags
 
 \method{process}{p2_segments_and_tags}(
   data,
+  n = 50,
   segment_regex = "^Segment of",
   tag_regex = "(?!.*RSVP|.*\\\\(Keep\\\\))\\\\d{6,}",
   ...
@@ -35,8 +36,7 @@ p2_segments_and_tags
 
 \item{emails}{email addresses (first will be sender)}
 
-\item{body}{Body of the email as text. If the parameter body refers to an existing file location,
-the text of the file is parsed as body of the email. Default is \verb{Sent by <computer name>}.}
+\item{body}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
 }
 \description{
 Report of Prospect2 segments and tags for review
