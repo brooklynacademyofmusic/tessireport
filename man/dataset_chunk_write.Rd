@@ -8,7 +8,7 @@ dataset_chunk_write(
   dataset,
   partition,
   dataset_name,
-  rows = data.table(I = seq_len(nrow(dataset))),
+  rows = data.table(rowid = seq_len(nrow(dataset))),
   cols = colnames(dataset),
   ...
 )
@@ -36,7 +36,7 @@ be an arrow_dplyr_query}
 }
 \description{
 Write out a chunk of a larger \code{dataset}, using Hadoop partition=\code{partition} nomenclature,
-saving it in the cache dir \code{dataset_name}. The chunk is identified by the I column in \code{rows},
+saving it in the cache dir \code{dataset_name}. The chunk is identified by the \code{rowid} column in \code{rows},
 which is attached to the columns of the dataset identified by \code{cols}. Features matching
 the regular expression in \code{rollback} are rolled back one row, and all timestamps are normalized
 by \link{dataset_normalize_timestamps}.

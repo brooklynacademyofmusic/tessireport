@@ -2,7 +2,7 @@
 #' dataset_chunk_write
 #'
 #' Write out a chunk of a larger `dataset`, using Hadoop partition=`partition` nomenclature,
-#' saving it in the cache dir `dataset_name`. The chunk is identified by the I column in `rows`,
+#' saving it in the cache dir `dataset_name`. The chunk is identified by the `rowid` column in `rows`,
 #' which is attached to the columns of the dataset identified by `cols`. Features matching
 #' the regular expression in `rollback` are rolled back one row, and all timestamps are normalized
 #' by [dataset_normalize_timestamps].
@@ -19,13 +19,13 @@
 #' @return NULL
 dataset_chunk_write <- function(dataset, partition,
                                 dataset_name,
-                                rows = data.table(I=seq_len(nrow(dataset))),
+                                rows = data.table(rowid=seq_len(nrow(dataset))),
                                 cols = colnames(dataset),
                                 ...) {
 
   . <- group_customer_no <- timestamp <- NULL
 
-  assert_names(names(dataset), must.include = c("timestamp",cols))
+  assert_names(names(dataset), must.include = c("timestamp","rowid",cols))
   assert_false(test_class(dataset,"arrow_dplyr_query"))
   assert_vector(partition, len = 1)
   assert_character(dataset_name, len = 1)
@@ -33,25 +33,24 @@ dataset_chunk_write <- function(dataset, partition,
 
   # in order to do rollbacks and timestamp normalization we need the most recent previous row per customer
   # and the first row per customer...
-  dataset <- dataset %>% cbind(I = seq_len(nrow(dataset)))
-  dataset_key <- dataset %>% select(all_of(c("group_customer_no","timestamp","I"))) %>%
+  dataset_key <- dataset %>% select(all_of(c("group_customer_no","timestamp","rowid"))) %>%
     collect %>% setDT
-  dataset_chunk <- dataset_key[rows, on = "I"]
+  dataset_chunk <- dataset_key[rows, on = "rowid"]
 
   dataset_chunk[,date := timestamp]
   dataset_key[,date := timestamp + 1e-9]
   setkey(dataset_key,group_customer_no,timestamp)
 
-  previous_rows <- dataset_key[dataset_chunk,.(I,timestamp,group_customer_no),on=c("group_customer_no","date"), roll = Inf]
-  first_rows <- dataset_key[,first(.SD),by=c("group_customer_no"),.SDcols = c("timestamp","I")]
+  previous_rows <- dataset_key[dataset_chunk,.(rowid,timestamp,group_customer_no),on=c("group_customer_no","date"), roll = Inf]
+  first_rows <- dataset_key[,first(.SD),by=c("group_customer_no"),.SDcols = c("timestamp","rowid")]
 
   # load rows of dataset
   dataset_chunk <- rbind(first_rows,previous_rows,dataset_chunk,fill=T) %>%
-    .[!is.na(I),last(.SD),by="I"] %>%
+    .[!is.na(rowid),last(.SD),by="rowid"] %>%
     setkey(group_customer_no,timestamp)
-  dataset <- dataset %>% filter(I %in% dataset_chunk$I) %>%
-    select(all_of(c("I",cols))) %>% collect %>% setDT %>%
-    .[dataset_chunk, on = "I"]
+  dataset <- dataset %>% filter(rowid %in% dataset_chunk$rowid) %>%
+    select(all_of(c("rowid",cols))) %>% collect %>% setDT %>%
+    .[dataset_chunk, on = "rowid"]
 
   # normalize names for mlr3
   setnames(dataset, names(dataset), \(.) gsub("\\W","_",.))
@@ -61,11 +60,11 @@ dataset_chunk_write <- function(dataset, partition,
   dataset <- dataset_normalize_timestamps(dataset = dataset, ...)
 
   # remove added rows
-  dataset[, I := dataset_chunk$I]
-  dataset <- dataset[rows,on="I"]
+  dataset[, rowid := dataset_chunk$rowid]
+  dataset <- dataset[rows,on="rowid"]
 
   # limit to input columns
-  dataset <- dataset[,union(gsub("\\W","_",cols),c(colnames(rows),"date","I")),with=F]
+  dataset <- dataset[,union(gsub("\\W","_",cols),c(colnames(rows),"date","rowid")),with=F]
   dataset[,`:=`(partition = partition)]
 
   tessilake::write_cache(dataset, "dataset", dataset_name, partition = "partition",

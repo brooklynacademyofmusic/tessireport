@@ -5,6 +5,7 @@ test_that("dataset_chunk_write writes out a chunk of data", {
   tessilake::local_cache_dirs()
 
   dataset <- data.frame(
+    rowid = 1:6,
     group_customer_no = rep(1:2,each=3),
     event_type = c("Ticket","Contribution","Contribution"),
     contributionAmt = 50,
@@ -25,6 +26,7 @@ test_that("dataset_chunk_write appends to existing data", {
   tessilake::local_cache_dirs()
 
   dataset <- data.frame(
+    rowid = 1:6,
     group_customer_no = rep(1:2,each=3),
     event_type = c("Ticket","Contribution","Contribution"),
     contributionAmt = 1:6,
@@ -34,6 +36,7 @@ test_that("dataset_chunk_write appends to existing data", {
   dataset_chunk_write(dataset, "year", "test")
 
   dataset <- data.frame(
+    rowid = 1:6,
     group_customer_no = rep(1:2,each=3),
     event_type = c("Ticket","Contribution","Contribution"),
     contributionAmt = 1:6,
@@ -56,12 +59,14 @@ test_that("dataset_chunk_write over multiple chunks produces the same results as
 
   dataset <- rbind(
     data.frame(
+      rowid = 1:6,
       group_customer_no = rep(1:2,each=3),
       event_type = c("Ticket","Contribution","Contribution"),
       contributionAmt = 1:6,
       event = T,
       timestamp = Sys.Date() + seq(6)),
     data.frame(
+      rowid = 7:12,
       group_customer_no = rep(1:2,each=3),
       event_type = c("Ticket","Contribution","Contribution"),
       contributionAmt = 1:6,
@@ -79,19 +84,21 @@ test_that("dataset_chunk_write over multiple chunks produces the same results as
 
   dataset <- rbind(
     data.frame(
+      rowid = 1:6,
       group_customer_no = rep(1:2,each=3),
       event_type = c("Ticket","Contribution","Contribution"),
       contributionAmt = 1:6,
       event = T,
       timestamp = Sys.Date() + seq(6)),
     data.frame(
+      rowid = 7:12,
       group_customer_no = rep(1:2,each=3),
       event_type = c("Ticket","Contribution","Contribution"),
       contributionAmt = 1:6,
       event = T,
       timestamp = Sys.Date() + seq(7,12))) %>% arrow::as_arrow_table()
 
-  expect_warning(dataset_chunk_write(dataset, "year", "test", rows = data.table(I=7:12)),"primary_keys not given")
+  expect_warning(dataset_chunk_write(dataset, "year", "test", rows = data.table(rowid=7:12)),"primary_keys not given")
 
   expect_equal(read_cache("dataset","test") %>% collect %>% setkey(group_customer_no,timestamp),
                dataset_test)
