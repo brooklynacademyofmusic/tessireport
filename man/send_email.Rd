@@ -9,25 +9,31 @@ send_email(
   body = paste("Sent by", Sys.info()["nodename"]),
   emails = config::get("tessiflow.email"),
   smtp = config::get("tessiflow.smtp"),
+  attachments = NULL,
+  engine = "curl",
   ...
 )
 }
 \arguments{
-\item{subject}{Subject of the email.}
+\item{subject}{character subject of the email}
 
-\item{body}{Body of the email as text. If the parameter body refers to an existing file location,
-the text of the file is parsed as body of the email. Default is \verb{Sent by <computer name>}.}
+\item{body}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
 
 \item{emails}{email addresses (first will be sender)}
 
-\item{smtp}{A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.}
+\item{smtp}{named list, should contain \code{hostname} and (optionally) \code{port}, which defaults to 25.
+Additional elements will get merged with \code{...} and passed to curl, see \link[curl:curl_options]{curl::curl_options} for more details.}
 
-\item{...}{
-  Arguments passed on to \code{\link[mailR:send.mail]{mailR::send.mail}}
-  \describe{
-    \item{\code{html}}{A boolean indicating whether the body of the email should be parsed as HTML.}
-    \item{\code{attach.files}}{A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)}
-  }}
+\item{attachments}{named vector, names are the attachment names, values are the filenames to attach.}
+
+\item{engine}{One of: \itemize{
+\item{\code{"internal"} for the internal smtp transport (default).}
+\item{\code{"curl"} for the use of curl for transport. Enable if you need STARTTLS/SSL
+and/or SMTP authentication. See \code{curl::\link[curl]{send_mail}}.}
+\item{\code{"debug"} sendmail returns a RFC2822 formatted email message without sending it.}
+}}
+
+\item{...}{...}
 }
 \description{
 send_email
