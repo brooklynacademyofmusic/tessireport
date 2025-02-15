@@ -62,6 +62,7 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
                                     dataset_name = "contributions_model",
                                     rows = .SD,
                                     cols = grep("Adj",colnames(stream),value=T,invert = T),
+                                    timestamp_cols = setdiff(grep("timestamp",colnames(stream),value=T,ignore.case = T),"timestamp_id"),
                                     rollback_cols = grep("^(contribution|ticket)",colnames(stream),value = T) %>%
                                       grep(pattern = "Adj",value=T,invert = T)),
                by = "partition"]
