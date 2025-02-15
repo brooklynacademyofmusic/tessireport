@@ -156,8 +156,9 @@ read.contributions_model <- function(model,
 #' * stacked log-reg + ranger > log-reg model
 #' * tuned using a hyperband method on the AUC (sensitivity/specificity)
 #' @param num_trees `integer(1)` maximum number of trees to use for ranger model
-train.contributions_model <- function(model, num_trees = 512, ...) {
-  subsample <- po("subsample", frac = .1)
+#' @param downsample_read `double(1)` fraction of observations to use for training, defaults to .1
+train.contributions_model <- function(model, num_trees = 512, downsample_train = .1, ...) {
+  subsample <- po("subsample", frac = downsample_train)
 
   preprocess <- po("select",selector = selector_invert(selector_grep("__1|Send", perl = T))) %>>%
                 po("classbalancing", reference = "minor",ratio = 10,adjust="downsample") %>>%
