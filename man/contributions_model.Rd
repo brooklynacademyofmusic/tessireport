@@ -33,7 +33,7 @@ contributions_dataset(
   ...
 )
 
-\method{train}{contributions_model}(model, num_trees = 512, ...)
+\method{train}{contributions_model}(model, num_trees = 512, downsample_train = 0.1, ...)
 
 \method{predict}{contributions_model}(model, ...)
 
@@ -53,7 +53,7 @@ or append new rows by calling \code{contributions_dataset(since=max_existing_dat
 
 \item{predict_since}{Date/POSIXct data on/after this date will be used to make predictions and not for training}
 
-\item{downsample_read}{\code{numeric(1)} the amount to downsample the dataset on read}
+\item{downsample_read}{\code{double(1)} fraction of observations to use for training, defaults to .1}
 
 \item{predict}{Not used, just here to prevent partial argument matching}
 
