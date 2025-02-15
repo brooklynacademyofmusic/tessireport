@@ -22,9 +22,16 @@ make_unsubscribe_report_fixtures <- function() {
 make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
 
   withr::local_envvar(R_CONFIG_FILE="")
+  withr::local_package("mockery")
 
-  if (rebuild)
+  if (rebuild) {
+    stream <- read_cache("stream","stream",include_partition=T)
+    max_partition = summarise(stream,max(partition)) %>% collect %>% as.numeric
+    stream_subset <- filter(stream, partition == max_partition) %>% dplyr::compute()
+    stub(contributions_dataset,"read_cache",stream_subset)
     contributions_dataset(rebuild_dataset = T)
+  }
+
 
   fixture <- read_cache("dataset","contributions_model") %>%
     dplyr::slice_sample(n = n) %>%
