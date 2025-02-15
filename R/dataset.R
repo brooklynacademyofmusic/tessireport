@@ -26,6 +26,8 @@ dataset_chunk_write <- function(dataset, partition,
   . <- group_customer_no <- timestamp <- NULL
 
   assert_names(names(dataset), must.include = c("timestamp","rowid",cols))
+  assert_names(names(rows), must.include = c("rowid"))
+
   assert_false(test_class(dataset,"arrow_dplyr_query"))
   assert_vector(partition, len = 1)
   assert_character(dataset_name, len = 1)
@@ -48,7 +50,9 @@ dataset_chunk_write <- function(dataset, partition,
   dataset_chunk <- rbind(first_rows,previous_rows,dataset_chunk,fill=T) %>%
     .[!is.na(rowid),last(.SD),by="rowid"] %>%
     setkey(group_customer_no,timestamp)
-  dataset <- dataset %>% filter(rowid %in% dataset_chunk$rowid) %>%
+  dataset <- dataset %>%
+    filter(rowid >= min(dataset_chunk$rowid) & rowid <= max(dataset_chunk$rowid)) %>%
+    filter(rowid %in% dataset_chunk$rowid) %>%
     select(all_of(c("rowid",cols))) %>% collect %>% setDT %>%
     .[dataset_chunk, on = "rowid"]
 
@@ -65,9 +69,9 @@ dataset_chunk_write <- function(dataset, partition,
 
   # limit to input columns
   dataset <- dataset[,union(gsub("\\W","_",cols),c(colnames(rows),"date","rowid")),with=F]
-  dataset[,`:=`(partition = partition)]
+  dataset$partition = partition
 
-  tessilake::write_cache(dataset, "dataset", dataset_name, partition = "partition",
+  tessilake::write_cache(dataset, "dataset", dataset_name, partition = "partition", primary_keys = "rowid",
                          incremental = TRUE, date_column = "date", sync = FALSE, prefer = "from")
 
 }
