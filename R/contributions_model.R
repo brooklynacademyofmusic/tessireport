@@ -30,11 +30,12 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
   }
 
   stream <- read_cache("stream", "stream", include_partition = TRUE)
+  assert_names(names(stream),must.include = c("group_customer_no","timestamp","event_type","contribution_amt","rowid"))
+
   stream_key <- stream %>%
-    select(all_of(c("group_customer_no","timestamp","event_type","contribution_amt"))) %>%
+    select(all_of(c("group_customer_no","timestamp","event_type","contribution_amt","rowid"))) %>%
     collect %>% setDT
 
-  stream_key[,I:=.I]
   setkey(stream_key,group_customer_no,timestamp)
 
   # add event
@@ -195,7 +196,7 @@ predict.contributions_model <- function(model, ...) {
 
   model$predictions <-
     cbind(as.data.table(model$model$predict(model$task$internal_valid_task)),
-          model$task$internal_valid_task$data(cols = c("I","group_customer_no","date")))
+          model$task$internal_valid_task$data(cols = c("rowid","group_customer_no","date")))
 
   NextMethod()
 }
@@ -217,8 +218,9 @@ output.contributions_model <- function(model, downsample_output = .01, ...) {
   model$dataset <- mutate(model$dataset, date = as.Date(date))
   model$predictions <- mutate(model$predictions, date = as.Date(date))
 
-  dataset_predictions <- inner_join(model$dataset,model$predictions,
-                                    by = c("group_customer_no","date","I")) %>% collect %>% setDT
+  dataset_predictions <- inner_join(model$dataset,
+                                    model$predictions,
+                                    by = c("group_customer_no","date","rowid")) %>% collect %>% setDT
 
   # Feature importance
   fi <- iml_featureimp(model$model, dataset_predictions[runif(.N)<downsample_output])
