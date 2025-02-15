@@ -111,9 +111,14 @@ read.contributions_model <- function(model,
             date = as.POSIXct(date))]
 
 
-  numeric_cols <- names(sapply(dataset, is.numeric)) %>% setdiff(c("event","date"))
+  # convert numeric and date to numeric
+  numeric_cols <- names(dataset)[which(sapply(dataset, \(.) is.numeric(.) | is.Date(.)))] %>% setdiff("event")
   dataset[,(numeric_cols) := lapply(.SD,as.numeric), .SDcols = numeric_cols]
+  # eliminate fully missing columns (for iml)
+  non_missing_cols <- names(dataset)[which(sapply(dataset, \(.) any(!is.na(.))))]
+  dataset <- dataset[,non_missing_cols,with=F]
 
+  model$dataset <- dataset
   model$task <- TaskClassif$new(id = "contributions",
                                 target = "event",
                                 backend = dataset)
