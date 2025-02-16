@@ -52,6 +52,8 @@
 <span>  body <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Sent by"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="st">"nodename"</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  emails <span class="op">=</span> <span class="fu">config</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/config/reference/get.html" class="external-link">get</a></span><span class="op">(</span><span class="st">"tessiflow.email"</span><span class="op">)</span>,</span>
 <span>  smtp <span class="op">=</span> <span class="fu">config</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/config/reference/get.html" class="external-link">get</a></span><span class="op">(</span><span class="st">"tessiflow.smtp"</span><span class="op">)</span>,</span>
+<span>  attachments <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  engine <span class="op">=</span> <span class="st">"curl"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -61,12 +63,11 @@
 
 
 <dl><dt id="arg-subject">subject<a class="anchor" aria-label="anchor" href="#arg-subject"></a></dt>
-<dd><p>Subject of the email.</p></dd>
+<dd><p>character subject of the email</p></dd>
 
 
 <dt id="arg-body">body<a class="anchor" aria-label="anchor" href="#arg-body"></a></dt>
-<dd><p>Body of the email as text. If the parameter body refers to an existing file location,
-the text of the file is parsed as body of the email. Default is <code>Sent by &lt;computer name&gt;</code>.</p></dd>
+<dd><p>html of message or a list containing <a href="https://rdrr.io/pkg/sendmailR/man/mime_part.html" class="external-link">sendmailR::mime_part</a> objects.</p></dd>
 
 
 <dt id="arg-emails">emails<a class="anchor" aria-label="anchor" href="#arg-emails"></a></dt>
@@ -74,18 +75,24 @@ the text of the file is parsed as body of the email. Default is <code>Sent by &l
 
 
 <dt id="arg-smtp">smtp<a class="anchor" aria-label="anchor" href="#arg-smtp"></a></dt>
-<dd><p>A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.</p></dd>
+<dd><p>named list, should contain <code>hostname</code> and (optionally) <code>port</code>, which defaults to 25.
+Additional elements will get merged with <code>...</code> and passed to curl, see <a href="https://jeroen.r-universe.dev/curl/reference/curl_options.html" class="external-link">curl::curl_options</a> for more details.</p></dd>
+
+
+<dt id="arg-attachments">attachments<a class="anchor" aria-label="anchor" href="#arg-attachments"></a></dt>
+<dd><p>named vector, names are the attachment names, values are the filenames to attach.</p></dd>
+
+
+<dt id="arg-engine">engine<a class="anchor" aria-label="anchor" href="#arg-engine"></a></dt>
+<dd><p>One of:</p><ul><li><p><code>"internal"</code> for the internal smtp transport (default).</p></li>
+<li><p><code>"curl"</code> for the use of curl for transport. Enable if you need STARTTLS/SSL
+and/or SMTP authentication. See <code>curl::<a href="https://jeroen.r-universe.dev/curl/reference/send_mail.html" class="external-link">send_mail</a></code>.</p></li>
+<li><p><code>"debug"</code> sendmail returns a RFC2822 formatted email message without sending it.</p></li>
+</ul></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="https://rdrr.io/pkg/mailR/man/send.mail.html" class="external-link">mailR::send.mail</a></code></p><dl><dt><code>html</code></dt>
-<dd><p>A boolean indicating whether the body of the email should be parsed as HTML.</p></dd>
-
-    <dt><code>attach.files</code></dt>
-<dd><p>A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)</p></dd>
-
-
-</dl></dd>
+<dd><p>...</p></dd>
 
 </dl></div>
 

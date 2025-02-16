@@ -69,13 +69,21 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'contributions_model'</span></span>
-<span><span class="fu"><a href="mlr_report.html">train</a></span><span class="op">(</span><span class="va">model</span>, num_trees <span class="op">=</span> <span class="fl">512</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu"><a href="mlr_report.html">train</a></span><span class="op">(</span><span class="va">model</span>, num_trees <span class="op">=</span> <span class="fl">512</span>, downsample_train <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'contributions_model'</span></span>
 <span><span class="fu"><a href="mlr_report.html">predict</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'contributions_model'</span></span>
-<span><span class="fu"><a href="report.html">output</a></span><span class="op">(</span><span class="va">model</span>, downsample_output <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="report.html">output</a></span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  downsample_output <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  features <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n.repetitions <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  n_top <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  n_features <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -123,9 +131,29 @@ or append new rows by calling <code>contributions_dataset(since=max_existing_dat
 <dd><p><code>integer(1)</code> maximum number of trees to use for ranger model</p></dd>
 
 
+<dt id="arg-downsample-train">downsample_train<a class="anchor" aria-label="anchor" href="#arg-downsample-train"></a></dt>
+<dd><p><code>double(1)</code> fraction of observations to use for training, defaults to .1</p></dd>
+
+
 <dt id="arg-downsample-output">downsample_output<a class="anchor" aria-label="anchor" href="#arg-downsample-output"></a></dt>
-<dd><p><code>numeric(1)</code> the amount to downsample the test set by for feature importance and
+<dd><p><code>numeric(1)</code> the proportion of the test set to use for feature importance and
 Shapley explanations</p></dd>
+
+
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
+<dd><p><code>character</code> The names of the features for which to compute the feature effects/importance.</p></dd>
+
+
+<dt id="arg-n-repetitions">n.repetitions<a class="anchor" aria-label="anchor" href="#arg-n-repetitions"></a></dt>
+<dd><p><code>numeric(1)</code> How many shufflings of the features should be done?</p></dd>
+
+
+<dt id="arg-n-top">n_top<a class="anchor" aria-label="anchor" href="#arg-n-top"></a></dt>
+<dd><p><code>integer(1)</code> the number of rows, ranked by probability to analyze and explain as 'top picks'.</p></dd>
+
+
+<dt id="arg-n-features">n_features<a class="anchor" aria-label="anchor" href="#arg-n-features"></a></dt>
+<dd><p><code>integer(1)</code> the number of features, ranked by importance to analyze.</p></dd>
 
 </dl></div>
     <div class="section level2">

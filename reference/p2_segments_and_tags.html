@@ -55,6 +55,7 @@
 <span><span class="co"># S3 method for class 'p2_segments_and_tags'</span></span>
 <span><span class="fu"><a href="report.html">process</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  segment_regex <span class="op">=</span> <span class="st">"^Segment of"</span>,</span>
 <span>  tag_regex <span class="op">=</span> <span class="st">"(?!.*RSVP|.*\\(Keep\\))\\d{6,}"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -80,6 +81,10 @@
 <dd><p>additional parameters passed on to <a href="send_email.html">send_email</a></p></dd>
 
 
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
+<dd><p>number of segments and tags to return</p></dd>
+
+
 <dt id="arg-segment-regex">segment_regex<a class="anchor" aria-label="anchor" href="#arg-segment-regex"></a></dt>
 <dd><p>Perl-compatible regular expression for filtering segment names</p></dd>
 
@@ -93,8 +98,7 @@
 
 
 <dt id="arg-body">body<a class="anchor" aria-label="anchor" href="#arg-body"></a></dt>
-<dd><p>Body of the email as text. If the parameter body refers to an existing file location,
-the text of the file is parsed as body of the email. Default is <code>Sent by &lt;computer name&gt;</code>.</p></dd>
+<dd><p>html of message or a list containing <a href="https://rdrr.io/pkg/sendmailR/man/mime_part.html" class="external-link">sendmailR::mime_part</a> objects.</p></dd>
 
 </dl></div>
     <div class="section level2">

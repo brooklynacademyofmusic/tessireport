@@ -66,7 +66,7 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a></code>, <code><a href="send_xlsx.html">send_xlsx</a></code>, <code><a href="write_xlsx.html">write_xlsx</a></code>, <code><a href="https://rdrr.io/pkg/mailR/man/send.mail.html" class="external-link">mailR::send.mail</a></code></p><dl><dt><code>primary_keys</code></dt>
+<dd><p>Arguments passed on to <code><a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a></code>, <code><a href="send_xlsx.html">send_xlsx</a></code>, <code><a href="write_xlsx.html">write_xlsx</a></code>, <code>mailR::send.mail</code></p><dl><dt><code>primary_keys</code></dt>
 <dd><p>character vector, primary keys of the table. <code>read_sql_table</code> will attempt to identify the primary keys using
 SQL metadata.</p></dd>
 
@@ -75,17 +75,16 @@ SQL metadata.</p></dd>
 
     <dt><code>basename</code></dt>
 <dd><p>name of the file to use in the email. Defaults to the name of the table.
-A timestamp and extension will be appended and passed on to <code><a href="https://rdrr.io/pkg/mailR/man/send.mail.html" class="external-link">mailR::send.mail</a></code> as <code>file.names</code></p></dd>
+A timestamp and extension will be appended and passed on to <a href="send_email.html">send_email</a> as the name of <code>attachments</code>.</p></dd>
 
     <dt><code>emails</code></dt>
 <dd><p>email addresses (first will be sender)</p></dd>
 
-    <dt><code>body</code></dt>
-<dd><p>Body of the email as text. If the parameter body refers to an existing file location,
-the text of the file is parsed as body of the email. Default is <code>Sent by &lt;computer name&gt;</code>.</p></dd>
-
     <dt><code>subject</code></dt>
-<dd><p>Subject of the email.</p></dd>
+<dd><p>character subject of the email</p></dd>
+
+    <dt><code>body</code></dt>
+<dd><p>html of message or a list containing <a href="https://rdrr.io/pkg/sendmailR/man/mime_part.html" class="external-link">sendmailR::mime_part</a> objects.</p></dd>
 
     <dt><code>group</code></dt>
 <dd><p>character name of column to be used for grouping/banding the data. Band color will change when column value changes.</p></dd>
