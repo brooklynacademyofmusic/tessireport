@@ -60,9 +60,7 @@ output.p2_segments_and_tags <- function(data, emails = config::get("tessiflow.em
     send_email(subject = paste("P2 segments and tags",Sys.Date()),
                emails = emails,
                body = body %||% paste("Sent by", Sys.info()["nodename"]),
-               attach.files = filenames,
-               html = TRUE,
-               file.names = paste0(c("segments","tags"),"_",Sys.Date(),".xlsx"), ...)
+               attachments = setNames(filenames,paste0(c("segments","tags"),"_",Sys.Date(),".xlsx")), ...)
 
     NextMethod()
 }
