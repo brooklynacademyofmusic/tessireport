@@ -37,7 +37,15 @@ contributions_dataset(
 
 \method{predict}{contributions_model}(model, ...)
 
-\method{output}{contributions_model}(model, downsample_output = 0.01, ...)
+\method{output}{contributions_model}(
+  model,
+  downsample_output = 0.01,
+  features = NULL,
+  n.repetitions = 5,
+  n_top = 500,
+  n_features = 25,
+  ...
+)
 }
 \arguments{
 \item{since}{Date/POSIXct data on or after this date will be loaded and possibly used for training}
@@ -59,8 +67,16 @@ or append new rows by calling \code{contributions_dataset(since=max_existing_dat
 
 \item{num_trees}{\code{integer(1)} maximum number of trees to use for ranger model}
 
-\item{downsample_output}{\code{numeric(1)} the amount to downsample the test set by for feature importance and
+\item{downsample_output}{\code{numeric(1)} the proportion of the test set to use for feature importance and
 Shapley explanations}
+
+\item{features}{\code{character} The names of the features for which to compute the feature effects/importance.}
+
+\item{n.repetitions}{\code{numeric(1)} How many shufflings of the features should be done?}
+
+\item{n_top}{\code{integer(1)} the number of rows, ranked by probability to analyze and explain as 'top picks'.}
+
+\item{n_features}{\code{integer(1)} the number of features, ranked by importance to analyze.}
 }
 \description{
 mlr3 model for predicting a customer's first contribution
