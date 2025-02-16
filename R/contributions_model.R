@@ -214,10 +214,15 @@ predict.contributions_model <- function(model, ...) {
 #' @importFrom purrr walk
 #' @importFrom tessilake cache_primary_path
 #' @importFrom stats runif
-#' @param downsample_output `numeric(1)` the amount to downsample the test set by for feature importance and
+#' @param n_top `integer(1)` the number of rows, ranked by probability to analyze and explain as 'top picks'.
+#' @param n_features `integer(1)` the number of features, ranked by importance to analyze.
+#' @param downsample_output `numeric(1)` the proportion of the test set to use for feature importance and
 #' Shapley explanations
+#' @inheritParams iml_featureimp
 #' @export
-output.contributions_model <- function(model, downsample_output = .01, ...) {
+output.contributions_model <- function(model, downsample_output = .01,
+                                       features = NULL, n.repetitions = 5,
+                                       n_top = 500, n_features = 25, ...) {
   prob.TRUE <- explanation <- NULL
 
   model <- NextMethod()
@@ -228,10 +233,24 @@ output.contributions_model <- function(model, downsample_output = .01, ...) {
   dataset_predictions <- inner_join(model$dataset,
                                     model$predictions,
                                     by = c("group_customer_no","date","rowid")) %>% collect %>% setDT
+  setorder(dataset_predictions,-prob.TRUE)
+  # add small random data
+  numeric_cols <- which(sapply(dataset_predictions,is.numeric))
+  dataset_predictions[,(numeric_cols) := lapply(.SD,\(.) . + runif(.N,1e-9,1e9)), .SDcols = numeric_cols]
+
+  # downsample and fill with small random data
+  downsampled <- dataset_predictions[runif(.N)<downsample_output]
+  missing_cols <- which(sapply(downsampled,\(.) all(is.na(.))))
+  downsampled <- downsampled[,(missing_cols) := runif(.N,1e-9,1e9)]
+
+  # select top rows and fill with small random data
+  top_picks <- dataset_predictions[seq(n_top)]
+  missing_cols <- which(sapply(top_picks,\(.) all(is.na(.))))
+  top_picks <- top_picks[,(missing_cols) := runif(.N,1e-9,1e9)]
 
   # Feature importance
-  fi <- iml_featureimp(model$model, dataset_predictions[runif(.N)<downsample_output])
-  top_features <- fi$results[1:25,"feature"]
+  fi <- iml_featureimp(model$model, downsampled, features = features, n.repetitions = n.repetitions)
+  top_features <- na.omit(fi$results[seq(n_features),"feature"])
 
   pfi <- plot(fi) + coord_flip() +
     theme_minimal(base_size = 8) +
@@ -241,12 +260,12 @@ output.contributions_model <- function(model, downsample_output = .01, ...) {
   walk(pfi$layers, \(.) .$aes_params <- list())
 
   # Feature effects across whole population
-  fe1 <- iml_featureeffects(model$model, dataset_predictions[runif(.N)<downsample_output], top_features)
+  fe1 <- iml_featureeffects(model$model, downsampled, top_features)
   pfe1 <- plot(fe1, fixed_y = F) &
     theme_minimal(base_size = 8) + theme(axis.title.y = element_blank())
 
   # Feature effects for top picks
-  fe2 <- iml_featureeffects(model$model, dataset_predictions[prob.TRUE > .75], top_features)
+  fe2 <- iml_featureeffects(model$model, top_picks, top_features)
   pfe2 <- plot(fe2, fixed_y = F) &
     theme_minimal(base_size = 8) + theme(axis.title.y = element_blank())
 
@@ -258,12 +277,11 @@ output.contributions_model <- function(model, downsample_output = .01, ...) {
   }, .title = "Contributions model", output_file = pdf_filename)
 
   # Shapley explanations
-  to_explain <- dataset_predictions[prob.TRUE>.75]
-  ex <- iml_shapley(model$model, dataset_predictions[runif(.N)<downsample_output],
-                    x.interest = to_explain, sample.size = 10)
+  ex <- iml_shapley(model$model, downsampled,
+                    x.interest = top_picks, sample.size = n.repetitions)
 
-  to_explain[,explanation := map(ex,"results")]
-  saveRDS(to_explain, cache_primary_path("shapley.Rds", "contributions_model"))
+  top_picks[,explanation := map(ex,"results")]
+  saveRDS(top_picks, cache_primary_path("shapley.Rds", "contributions_model"))
 
 }
 
