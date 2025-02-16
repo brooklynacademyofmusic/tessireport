@@ -29,7 +29,7 @@ read.p2_segments_and_tags <- function(data, ...) {
 
 #' @param segment_regex Perl-compatible regular expression for filtering segment names
 #' @param tag_regex Perl-compatible regular expression for filtering tag names
-#'
+#' @param n number of segments and tags to return
 #' @export
 #' @describeIn p2_segments_and_tags filter Prospect2 segments and tags
 process.p2_segments_and_tags <- function(data,

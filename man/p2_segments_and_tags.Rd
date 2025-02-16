@@ -30,6 +30,8 @@ p2_segments_and_tags
 
 \item{...}{additional parameters passed on to \link{send_email}}
 
+\item{n}{number of segments and tags to return}
+
 \item{segment_regex}{Perl-compatible regular expression for filtering segment names}
 
 \item{tag_regex}{Perl-compatible regular expression for filtering tag names}
