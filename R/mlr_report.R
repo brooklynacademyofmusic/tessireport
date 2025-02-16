@@ -54,7 +54,7 @@ output.mlr_report <- function(mlr_report, ...) {
     mlr_report$model <- load_model(report_name)
 
   if (is.null(mlr_report$dataset))
-    mlr_report$dataset <- read_cache("dataset",report_name)
+    mlr_report$dataset <- read(mlr_report)
 
   if (is.null(mlr_report$predictions))
     mlr_report$predictions <- read_cache("predictions",report_name)
