@@ -61,11 +61,13 @@ or append new rows by calling \code{contributions_dataset(since=max_existing_dat
 
 \item{predict_since}{Date/POSIXct data on/after this date will be used to make predictions and not for training}
 
-\item{downsample_read}{\code{double(1)} fraction of observations to use for training, defaults to .1}
+\item{downsample_read}{\code{numeric(1)} the amount to downsample the dataset on read}
 
 \item{predict}{Not used, just here to prevent partial argument matching}
 
 \item{num_trees}{\code{integer(1)} maximum number of trees to use for ranger model}
+
+\item{downsample_train}{\code{double(1)} fraction of observations to use for training, defaults to .1}
 
 \item{downsample_output}{\code{numeric(1)} the proportion of the test set to use for feature importance and
 Shapley explanations}
