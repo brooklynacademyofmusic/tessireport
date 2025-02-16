@@ -105,6 +105,7 @@ iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
 #' @param filter `character(1)` regular expression of feature/value combinations to exclude
 #' @param n `integer(1)` maximum number of explanatory features to return
 #' @importFrom checkmate assert_data_frame assert_names
+#' @importFrom utils head
 #' @return string explaining the feature values
 parse_shapley <- function(explanation, filter = "=0|=NA", n = 3) {
 

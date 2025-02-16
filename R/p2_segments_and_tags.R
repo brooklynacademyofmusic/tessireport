@@ -53,6 +53,7 @@ process.p2_segments_and_tags <- function(data,
 #' @param ... additional parameters passed on to [send_email]
 #' @export
 #' @describeIn p2_segments_and_tags send an email with spreadsheets of segments and tags
+#' @importFrom stats setNames
 output.p2_segments_and_tags <- function(data, emails = config::get("tessiflow.email"), body = NULL, ...) {
 
     filenames <- sapply(data,write_xlsx)
