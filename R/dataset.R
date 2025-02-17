@@ -51,7 +51,6 @@ dataset_chunk_write <- function(dataset, partition,
     .[!is.na(rowid),last(.SD),by="rowid"] %>%
     setkey(group_customer_no,timestamp)
   dataset <- dataset %>%
-    filter(rowid >= min(dataset_chunk$rowid) & rowid <= max(dataset_chunk$rowid)) %>%
     filter(rowid %in% dataset_chunk$rowid) %>%
     select(all_of(c("rowid",cols))) %>% collect %>% setDT %>%
     .[dataset_chunk, on = "rowid"]
