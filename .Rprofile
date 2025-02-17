@@ -4,3 +4,5 @@ if(system.file(package="rprojroot")!="")
 user_profile <- file.path(Sys.getenv("R_USER"),".Rprofile")
 if(file.exists(user_profile))
   source(user_profile)
+
+Sys.setenv("MODEL_TESTS" = interactive())

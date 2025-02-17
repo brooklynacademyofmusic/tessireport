@@ -142,7 +142,7 @@ test_that("read.contributions_model creates a valid mlr3 validation task", {
 
 })
 
-
+if(Sys.getenv("MODEL_TESTS")=="TRUE") {
 # train.contributions_model -----------------------------------------------
 tessilake::local_cache_dirs()
 test_that("train.contributions_model successfully trains a model", {
@@ -199,6 +199,6 @@ test_that("output.contributions_model successfully interprets the model", {
   expect_names(colnames(explanations), must.include = "explanation")
 
 })
-
+}
 
 
