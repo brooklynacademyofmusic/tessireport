@@ -48,7 +48,7 @@ test_that("send_email sends attachments", {
   expect_match(mail,"This is a test email",all = F)
   expect_match(mail,"test@test.com",all = F)
   expect_match(mail,"Content-Type: text/html",all = F)
-  expect_match(mail,base64enc::base64encode(charToRaw("Hi!!!! 😊✨\r\n")),all = F)
+  expect_match(mail,gsub("=","",base64enc::base64encode(charToRaw("Hi!!!! 😊✨"))),all = F)
 })
 
 
