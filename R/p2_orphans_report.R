@@ -75,7 +75,7 @@ run.p2_orphans_report <- function(p2_orphans_report, freshness = 0, ...) {
     subject = paste("P2 Orphan Report :",lubridate::today()),
     body = html_file,
     emails = "ssyzygy@bam.org",
-    attachments = setNames(nm = paste0("p2_ophan_report_",lubridate::today(),".xlsx")),
+    basename = "p2_orphan_report"
   )
 
 }
