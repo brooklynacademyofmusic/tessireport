@@ -93,7 +93,7 @@ iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
   s <- Shapley$new(predictor, sample.size = sample.size)
   explanations <- x.interest[,predictor$data$feature.names,with=F] %>%
     split(seq_len(nrow(.))) %>%
-    future_map(\(.) {s$explain(as.data.frame(.)); s$clone()}, seed = TRUE)
+    future_map(\(.) {s$explain(as.data.frame(.)); s$clone()})
 }
 
 #' parse_shapley
