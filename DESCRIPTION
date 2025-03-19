@@ -5,17 +5,16 @@ Authors@R:
     person(given = "Sky",
            family = "Syzygy",
            role = c("aut", "cre"),
-           email = "sky@skysyzygy.xyz",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "sky@skysyzygy.xyz")
 Description: tessireport is a set of scripts for data hygiene in Tessitura, using data queried and cached by tessilake and processed by tessistream.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-URL: https://github.com/skysyzygy/tessireport
-BugReports: https://github.com/skysyzygy/tessireport/issues
+URL: https://github.com/brooklynacademyofmusic/tessireport
+BugReports: https://github.com/brooklynacademyofmusic/tessireport/issues
 Config/Needs/website: 
-    skysyzygy/dataAtBAM.pkgdown
+    brooklynacademyofmusic/dataAtBAM.pkgdown
 Depends:
     R (>= 3.5.0)
 Imports: 
@@ -66,8 +65,8 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Remotes: 
-    skysyzygy/tessilake,
-    skysyzygy/tessistream,
+    brooklynacademyofmusic/tessilake,
+    brooklynacademyofmusic/tessistream,
     skysyzygy/ffbase/pkg,
     mlr-org/mlr3proba,
     hadley/emo

@@ -11,13 +11,13 @@ tessireport is a set of scripts for data hygiene in Tessitura, using data querie
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/skysyzygy/tessireport}
-  \item Report bugs at \url{https://github.com/skysyzygy/tessireport/issues}
+  \item \url{https://github.com/brooklynacademyofmusic/tessireport}
+  \item Report bugs at \url{https://github.com/brooklynacademyofmusic/tessireport/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Sky Syzygy \email{sky@skysyzygy.xyz} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Sky Syzygy \email{sky@skysyzygy.xyz}
 
 }
 \keyword{internal}
