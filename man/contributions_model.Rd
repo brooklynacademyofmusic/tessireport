@@ -19,6 +19,7 @@ contributions_dataset(
   since = Sys.Date() - 365 * 5,
   until = Sys.Date(),
   rebuild_dataset = NULL,
+  chunk_size = 1e+07,
   ...
 )
 
@@ -54,6 +55,8 @@ contributions_dataset(
 
 \item{rebuild_dataset}{boolean rebuild the dataset by calling \code{contributions_dataset(since=since,until=until)} (TRUE), just read the existing one (FALSE),
 or append new rows by calling \code{contributions_dataset(since=max_existing_date,until=until)} (NULL, default)}
+
+\item{chunk_size}{integer(1) number of rows per partition}
 
 \item{...}{not used}
 

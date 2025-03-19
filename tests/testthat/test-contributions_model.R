@@ -51,10 +51,11 @@ test_that("contributions_dataset rebuilds all data when rebuild_dataset = TRUE",
 
   dataset_chunk_write <- mock(T)
   stub(contributions_dataset, "dataset_chunk_write", dataset_chunk_write)
-  contributions_dataset(rebuild_dataset = T)
+  debugonce(contributions_dataset)
+  contributions_dataset(rebuild_dataset = T, chunk_size = 2)
 
   expect_length(mock_args(dataset_chunk_write),1)
-  expect_equal(mock_args(dataset_chunk_write)[[1]][["partition"]], year(Sys.Date()-60))
+  expect_equal(mock_args(dataset_chunk_write)[[1]][["partition"]], 1)
 
 })
 
@@ -88,9 +89,9 @@ test_that("contributions_dataset only appends data when rebuild_dataset = NULL",
   contributions_dataset()
   expect_length(mock_args(dataset_chunk_write),0)
 
-  contributions_dataset(until = Inf)
+  contributions_dataset(until = Inf, chunk_size = 2)
   expect_length(mock_args(dataset_chunk_write),1)
-  expect_equal(mock_args(dataset_chunk_write)[[1]][["partition"]], year(Sys.Date()+365))
+  expect_equal(mock_args(dataset_chunk_write)[[1]][["partition"]], 2)
 
 })
 

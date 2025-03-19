@@ -11,10 +11,11 @@ contributions_model <- report(class=c("contributions_model","mlr_report"))
 #' * only data since `since` are loaded
 #' Data is written to the primary cache partitioned by year and then synced across storages
 #' @param since Date/POSIXct data on or after this date will be loaded and possibly used for training
+#' @param chunk_size integer(1) number of rows per partition
 #' @param ... not used
 #' @importFrom ff delete
 contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
-                                  rebuild_dataset = NULL, ...) {
+                                  rebuild_dataset = NULL, chunk_size = 1e7, ...) {
 
 
   . <- stream <- group_customer_no <- timestamp <- event_type <- event <- contribution_amt <- n_event <-
@@ -54,8 +55,8 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
   setorder(stream_key, group_customer_no, date, -event)
   stream_key <- stream_key[, first(.SD), by = c("group_customer_no", "date")]
 
-  # partition by year
-  stream_key[,partition := year(timestamp)]
+  # partition by fixed number of rows
+  stream_key[,partition := ceiling(rowid/chunk_size)]
 
   if(nrow(stream_key) > 0) {
     stream_key[,dataset_chunk_write(dataset = stream, partition = partition,
