@@ -27,7 +27,7 @@
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/skysyzygy/tessireport/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/brooklynacademyofmusic/tessireport/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +37,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>contributions_model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/skysyzygy/tessireport/blob/main/R/contributions_model.R" class="external-link"><code>R/contributions_model.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/brooklynacademyofmusic/tessireport/blob/main/R/contributions_model.R" class="external-link"><code>R/contributions_model.R</code></a></small>
       <div class="d-none name"><code>contributions_model.Rd</code></div>
     </div>
 
@@ -53,6 +53,7 @@
 <span>  since <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">365</span> <span class="op">*</span> <span class="fl">5</span>,</span>
 <span>  until <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  rebuild_dataset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chunk_size <span class="op">=</span> <span class="fl">1e+07</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -79,7 +80,7 @@
 <span>  <span class="va">model</span>,</span>
 <span>  downsample_output <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  features <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  n.repetitions <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  n_repetitions <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  n_top <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  n_features <span class="op">=</span> <span class="fl">25</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -105,6 +106,10 @@
 <dt id="arg-rebuild-dataset">rebuild_dataset<a class="anchor" aria-label="anchor" href="#arg-rebuild-dataset"></a></dt>
 <dd><p>boolean rebuild the dataset by calling <code>contributions_dataset(since=since,until=until)</code> (TRUE), just read the existing one (FALSE),
 or append new rows by calling <code>contributions_dataset(since=max_existing_date,until=until)</code> (NULL, default)</p></dd>
+
+
+<dt id="arg-chunk-size">chunk_size<a class="anchor" aria-label="anchor" href="#arg-chunk-size"></a></dt>
+<dd><p>integer(1) number of rows per partition</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -142,10 +147,6 @@ Shapley explanations</p></dd>
 
 <dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
 <dd><p><code>character</code> The names of the features for which to compute the feature effects/importance.</p></dd>
-
-
-<dt id="arg-n-repetitions">n.repetitions<a class="anchor" aria-label="anchor" href="#arg-n-repetitions"></a></dt>
-<dd><p><code>numeric(1)</code> How many shufflings of the features should be done?</p></dd>
 
 
 <dt id="arg-n-top">n_top<a class="anchor" aria-label="anchor" href="#arg-n-top"></a></dt>
