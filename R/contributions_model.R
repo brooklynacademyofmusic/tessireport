@@ -217,6 +217,7 @@ predict.contributions_model <- function(model, ...) {
 #' @importFrom stats runif
 #' @param n_top `integer(1)` the number of rows, ranked by probability to analyze and explain as 'top picks'.
 #' @param n_features `integer(1)` the number of features, ranked by importance to analyze.
+#' @param n_repetitions `numeric(1)` How many shufflings of the features should be done? See [iml::FeatureImp] for more info.s
 #' @param downsample_output `numeric(1)` the proportion of the test set to use for feature importance and
 #' Shapley explanations
 #' @inheritParams iml_featureimp
