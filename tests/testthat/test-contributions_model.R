@@ -51,7 +51,6 @@ test_that("contributions_dataset rebuilds all data when rebuild_dataset = TRUE",
 
   dataset_chunk_write <- mock(T)
   stub(contributions_dataset, "dataset_chunk_write", dataset_chunk_write)
-  debugonce(contributions_dataset)
   contributions_dataset(rebuild_dataset = T, chunk_size = 2)
 
   expect_length(mock_args(dataset_chunk_write),1)
