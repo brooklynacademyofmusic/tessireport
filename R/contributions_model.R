@@ -221,7 +221,7 @@ predict.contributions_model <- function(model, ...) {
 #' @inheritParams iml_featureimp
 #' @export
 output.contributions_model <- function(model, downsample_output = .01,
-                                       features = NULL, n.repetitions = 5,
+                                       features = NULL, n_repetitions = 5,
                                        n_top = 500, n_features = 25, ...) {
   prob.TRUE <- explanation <- NULL
 
@@ -249,7 +249,7 @@ output.contributions_model <- function(model, downsample_output = .01,
   top_picks <- top_picks[,(missing_cols) := runif(.N,1e-9,1e9)]
 
   # Feature importance
-  fi <- iml_featureimp(model$model, downsampled, features = features, n.repetitions = n.repetitions)
+  fi <- iml_featureimp(model$model, downsampled, features = features, n.repetitions = n_repetitions)
   top_features <- na.omit(fi$results[seq(n_features),"feature"])
 
   pfi <- plot(fi) + coord_flip() +
@@ -278,7 +278,7 @@ output.contributions_model <- function(model, downsample_output = .01,
 
   # Shapley explanations
   ex <- iml_shapley(model$model, downsampled,
-                    x.interest = top_picks, sample.size = n.repetitions)
+                    x.interest = top_picks, sample.size = n_repetitions)
 
   top_picks[,explanation := map(ex,"results")]
   saveRDS(top_picks, cache_primary_path("shapley.Rds", "contributions_model"))

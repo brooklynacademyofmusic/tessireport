@@ -41,7 +41,7 @@ contributions_dataset(
   model,
   downsample_output = 0.01,
   features = NULL,
-  n.repetitions = 5,
+  n_repetitions = 5,
   n_top = 500,
   n_features = 25,
   ...
@@ -73,8 +73,6 @@ or append new rows by calling \code{contributions_dataset(since=max_existing_dat
 Shapley explanations}
 
 \item{features}{\code{character} The names of the features for which to compute the feature effects/importance.}
-
-\item{n.repetitions}{\code{numeric(1)} How many shufflings of the features should be done?}
 
 \item{n_top}{\code{integer(1)} the number of rows, ranked by probability to analyze and explain as 'top picks'.}
 
