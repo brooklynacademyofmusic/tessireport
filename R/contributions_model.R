@@ -69,7 +69,7 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
                                     rollback_cols = grep("^(contribution|ticket)",colnames(stream),value = T) %>%
                                       grep(pattern = "Adj",value=T,invert = T)),
                by = "partition"]
-    tessilake::sync_cache("dataset", "contributions_model", overwrite = TRUE)
+    tessilake::sync_cache("dataset", "contributions_model", overwrite = TRUE, partition = "partition")
   }
 
 
