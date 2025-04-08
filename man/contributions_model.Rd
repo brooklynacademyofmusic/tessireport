@@ -29,18 +29,18 @@ contributions_dataset(
   until = Sys.Date(),
   predict_since = Sys.Date() - 30,
   rebuild_dataset = NULL,
-  downsample_read = 0.1,
+  downsample_read = 1,
   predict = NULL,
   ...
 )
 
-\method{train}{contributions_model}(model, num_trees = 512, downsample_train = 0.1, ...)
+\method{train}{contributions_model}(model, num_trees = 512, downsample_train = 1, ...)
 
 \method{predict}{contributions_model}(model, ...)
 
 \method{output}{contributions_model}(
   model,
-  downsample_output = 0.01,
+  downsample_output = 1,
   features = NULL,
   n_repetitions = 5,
   n_top = 500,

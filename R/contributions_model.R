@@ -39,7 +39,7 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
 
   setkey(stream_key,group_customer_no,timestamp)
 
-  # add event
+  # add event indicator
   stream_key[,event := event_type == "Contribution" & contribution_amt>=50]
   stream_key[,`:=`(n_event = cumsum(event),
                    N = .N), by="group_customer_no"]
@@ -51,9 +51,11 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
   stream_key <- stream_key[timestamp >= dataset_max_date %||% since & timestamp < until]
 
   # subsample
-  stream_key[, date := as.Date(timestamp)]
-  setorder(stream_key, group_customer_no, date, -event)
-  stream_key <- stream_key[, first(.SD), by = c("group_customer_no", "date")]
+  stream_key[, `:=`(date = as.Date(timestamp),
+                    month = lubridate::floor_date(timestamp, "months"))]
+  setorder(stream_key, group_customer_no, month, event, timestamp)
+  stream_key <- stream_key[, last(.SD), by = c("group_customer_no", "month")]
+  stream_key$month <- NULL
 
   # partition by fixed number of rows
   stream_key[,partition := ceiling(rowid/chunk_size)]
@@ -95,7 +97,7 @@ read.contributions_model <- function(model,
                                      until = Sys.Date(),
                                      predict_since = Sys.Date() - 30,
                                      rebuild_dataset = NULL,
-                                     downsample_read = .1,
+                                     downsample_read = 1,
                                      predict = NULL, ...) {
 
   . <- event <- date <- TRUE
@@ -158,7 +160,7 @@ read.contributions_model <- function(model,
 #' * tuned using a hyperband method on the AUC (sensitivity/specificity)
 #' @param num_trees `integer(1)` maximum number of trees to use for ranger model
 #' @param downsample_train `double(1)` fraction of observations to use for training, defaults to .1
-train.contributions_model <- function(model, num_trees = 512, downsample_train = .1, ...) {
+train.contributions_model <- function(model, num_trees = 512, downsample_train = 1, ...) {
   subsample <- po("subsample", frac = downsample_train)
 
   preprocess <- po("select",selector = selector_invert(selector_grep("__1|Send", perl = T))) %>>%
@@ -222,7 +224,7 @@ predict.contributions_model <- function(model, ...) {
 #' Shapley explanations
 #' @inheritParams iml_featureimp
 #' @export
-output.contributions_model <- function(model, downsample_output = .01,
+output.contributions_model <- function(model, downsample_output = 1,
                                        features = NULL, n_repetitions = 5,
                                        n_top = 500, n_features = 25, ...) {
   prob.TRUE <- explanation <- NULL
