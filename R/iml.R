@@ -115,7 +115,7 @@ parse_shapley <- function(explanation, filter = "=0|=NA", n = 3) {
   setDT(explanation)
   explanation[, rank := phi - 1.98*phi.var]
   setorder(explanation, -rank)
-  features <- explanation[!grepl(filter,feature.value,perl=t)] %>% head(n = n) %>%
+  features <- explanation[!grepl(filter,feature.value,perl=T)] %>% head(n = n) %>%
     .[,value := as.numeric(stringr::str_split_i(feature.value,"=",2))] %>%
     .[grepl("timestamp",feature,ignore.case=T), value_fmt := format(as.difftime(round(value/86400), units = "days"),
                                                                     trim = T, big.mark = ",")] %>%
