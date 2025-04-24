@@ -6,7 +6,6 @@
 #' @inheritDotParams tessilake::read_sql freshness primary_keys
 #' @inheritDotParams send_xlsx subject body emails basename
 #' @inheritDotParams write_xlsx group currency
-#' @inheritDotParams mailR::send.mail html inline
 #' @name sql_report
 #' @examples
 #' \dontrun{
