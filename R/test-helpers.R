@@ -1,3 +1,6 @@
+
+# unsubscribe_report ------------------------------------------------------
+
 #' make_unsubscribe_report_fixtures
 #'
 #' Make fixtures for unsubscribe_report testing
@@ -18,6 +21,53 @@ make_unsubscribe_report_fixtures <- function() {
 
   saveRDS(report,rprojroot::find_testthat_root_file("unsubscribe_report.Rds"))
 }
+
+
+# attendance_report -------------------------------------------------------
+
+make_attendance_report_fixtures <- function(n = 1000) {
+  fixtures <- list()
+
+  tables = c("orders","order_detail","special_activities","performances","seats")
+
+  fixtures[tables] <- lapply(tables,read_tessi)
+
+  fixtures$scans = read_sql(paste("select top",n,"* from T_ATTENDANCE a where ticket_no is null"))
+  fixtures$order_detail <- dplyr::slice_tail(fixtures$order_detail, n=n)
+  fixtures$seats <- dplyr::semi_join(fixtures$seats, fixtures$order_detail,
+                              by=c("perf_no","seat_no"))
+  fixtures$orders <- dplyr::semi_join(fixtures$orders, fixtures$order_detail,
+                                      by="order_no")
+  fixtures$performances <- dplyr::semi_join(fixtures$performances,
+                                            fixtures$scans, by = "perf_no")
+
+  for(table in names(fixtures)) {
+
+    fixtures[[table]] <- collect(fixtures[[table]]) %>% setDT
+    customer_nos <- sample(seq(n),
+                           nrow(fixtures[[table]]),
+                           replace = T)
+    if("customer_no" %in% names(fixtures[[table]]))
+      fixtures[[table]][,customer_no := customer_nos]
+
+    if("group_customer_no" %in% names(fixtures[[table]]))
+      fixtures[[table]][,group_customer_no := customer_nos]
+
+  }
+
+  fixtures$customers <- data.table(customer_no = seq(n),
+                                   group_customer_no = seq(n),
+                                   display_name = paste("Customer",seq(n)),
+                                   sort_name = paste0(seq(n),"/Customer"))
+
+  fixtures$vips <- data.table(list_no=1, customer_no=seq(n))
+
+  saveRDS(fixtures,rprojroot::find_testthat_root_file("attendance_report.Rds"))
+
+}
+
+
+# contributions_model -----------------------------------------------------
 
 make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
 
