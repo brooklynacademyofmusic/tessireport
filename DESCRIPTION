@@ -1,6 +1,6 @@
 Package: tessireport
 Title: Data hygiene tools for Tessitura
-Version: 0.1.0
+Version: 0.3.0
 Authors@R: 
     person(given = "Sky",
            family = "Syzygy",
