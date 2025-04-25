@@ -26,6 +26,7 @@ make_unsubscribe_report_fixtures <- function() {
 # attendance_report -------------------------------------------------------
 
 make_attendance_report_fixtures <- function(n = 1000) {
+  withr::local_envvar(R_CONFIG_FILE="")
   fixtures <- list()
 
   tables = setdiff(eval(formals(read.attendance_report)$tables),"customers")
