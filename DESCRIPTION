@@ -37,6 +37,7 @@ Imports:
     ggplot2,
     httr,
     iml,
+    kableExtra,
     keyring,
     knitr,
     lubridate,
