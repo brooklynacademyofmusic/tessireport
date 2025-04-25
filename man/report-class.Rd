@@ -2,6 +2,7 @@
 % Please edit documentation in R/ZZZ_report.R
 \name{report}
 \alias{report}
+\alias{\%+\%}
 \alias{is_report}
 \alias{read}
 \alias{read.report}
@@ -17,6 +18,8 @@
 \title{report}
 \usage{
 report(x = list(), class = character())
+
+report_x \%+\% report_y
 
 is_report(x)
 
@@ -47,38 +50,44 @@ run(...)
 
 \item{class}{an optional additional subclass}
 
+\item{report_x}{report}
+
+\item{report_y}{report}
+
 \item{...}{additional parameters for subclassed methods}
+}
+\value{
+report that contains data from \code{report_x} and \code{report_y} and inherits from both \code{report_x} and \code{report_y}
 }
 \description{
 Base S3 class for report.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
+\item \code{report_x \%+\% report_y}: composable argument for report classes
+
+\item \code{is_report()}: tests if x is an report object
+
+\item \code{read()}: generic function to dispatch for data reading
+
 \item \code{read(report)}: does thing but print a warning, intended to be overloaded by subclass
+
+\item \code{process()}: generic function to dispatch for data processing
 
 \item \code{process(report)}: does thing but print a warning, intended to be overloaded by subclass
 
 \item \code{print(report)}: prints the names and contents of the report object
 
-\item \code{output(report)}: does thing but print a warning, intended to be overloaded by subclass
-
-\item \code{write(report)}: does thing but print a warning, intended to be overloaded by subclass
-
-\item \code{run(report)}: run all methods in order: read -> process -> output -> write
-
-}}
-\section{Functions}{
-\itemize{
-\item \code{is_report()}: tests if x is an report object
-
-\item \code{read()}: generic function to dispatch for data reading
-
-\item \code{process()}: generic function to dispatch for data processing
-
 \item \code{output()}: generic fucntion to dispatch for data output
+
+\item \code{output(report)}: does thing but print a warning, intended to be overloaded by subclass
 
 \item \code{write()}: generic function to dispatch for data saving
 
+\item \code{write(report)}: does thing but print a warning, intended to be overloaded by subclass
+
 \item \code{run()}: generic function to dispatch for report running
+
+\item \code{run(report)}: run all methods in order: read -> process -> write -> output
 
 }}
