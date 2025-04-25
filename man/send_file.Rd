@@ -2,7 +2,9 @@
 % Please edit documentation in R/senders.R
 \name{send_xlsx}
 \alias{send_xlsx}
-\title{send_xlsx}
+\alias{send_file}
+\alias{output.email_report}
+\title{send_file}
 \usage{
 send_xlsx(
   table,
@@ -10,6 +12,15 @@ send_xlsx(
   body = paste("Sent by", Sys.info()["nodename"]),
   emails = config::get("tessiflow.email"),
   basename = format(substitute(table)),
+  ...
+)
+
+\method{output}{email_report}(
+  filename,
+  subject = paste(format(substitute(table)), Sys.Date()),
+  body = paste("Sent by", Sys.info()["nodename"]),
+  emails = config::get("tessiflow.email"),
+  basename = basename(filename),
   ...
 )
 }
@@ -31,7 +42,16 @@ A timestamp and extension will be appended and passed on to \link{send_email} as
     \item{\code{group}}{character name of column to be used for grouping/banding the data. Band color will change when column value changes.}
     \item{\code{currency}}{character vector of column to be used for grouping/banding the data. Band color will change when column value changes.}
   }}
+
+\item{filename}{filename to write}
 }
 \description{
-Simple wrapper for \link{send_email} and \link{write_xlsx}
+Helpers for sending a file via email
 }
+\section{Functions}{
+\itemize{
+\item \code{send_xlsx()}: Simple wrapper for \link{send_email} and \link{write_xlsx}
+
+\item \code{output(email_report)}: report definition for sending a file by email
+
+}}

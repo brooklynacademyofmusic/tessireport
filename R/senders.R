@@ -49,18 +49,9 @@ send_email <- function(subject, body = paste("Sent by", Sys.info()["nodename"]),
   do.call(sendmail,dots)
 }
 
-#' send_xlsx
-#'
-#' Simple wrapper for [send_email] and [write_xlsx]
-#'
-#' @inheritParams send_email
+#' @describeIn send_file Simple wrapper for [send_email] and [write_xlsx]
 #' @inheritParams write_xlsx
-#' @param table data.table to send
-#' @param basename name of the file to use in the email. Defaults to the name of the table.
-#' A timestamp and extension will be appended and passed on to [send_email] as the name of `attachments`.
 #' @inheritDotParams write_xlsx group currency
-#' @importFrom checkmate assert_data_table assert_character
-#' @export
 send_xlsx <- function(table,
                       subject = paste(format(substitute(table)), Sys.Date()),
                       body = paste("Sent by",Sys.info()["nodename"]),
@@ -77,6 +68,44 @@ send_xlsx <- function(table,
                                      emails = emails,
                                      attachments = setNames(filename,name)),
                      rlang::list2(...))
+
+  do.call(send_email,send_email_args)
+
+}
+
+email_report <- report(class = "email_report")
+
+#' send_file
+#'
+#' Helpers for sending a file via email
+#'
+#' @inheritParams send_email
+#' @param table data.table to send
+#' @param basename name of the file to use in the email. Defaults to the name of the table.
+#' A timestamp and extension will be appended and passed on to [send_email] as the name of `attachments`.
+#' @name send_file
+NULL
+
+
+#' @importFrom checkmate assert_data_table assert_character
+#' @importFrom tools file_path_sans_ext file_ext
+#' @export
+#' @describeIn send_file report definition for sending a file by email
+output.email_report <- function(filename,
+                                subject = paste(format(substitute(table)), Sys.Date()),
+                                body = paste("Sent by",Sys.info()["nodename"]),
+                                emails = config::get("tessiflow.email"),
+                                basename = basename(filename), ...) {
+  assert_data_table(table)
+  assert_character(emails, min.len = 1)
+
+  name <- paste0(file_path_sans_ext(basename),"_",Sys.Date(),file_ext(basename))
+
+  send_email_args <- modifyList(list(subject = subject,
+                                     body = body,
+                                     emails = emails,
+                                     attachments = setNames(filename,name)),
+                                rlang::list2(...))
 
   do.call(send_email,send_email_args)
 
