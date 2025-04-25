@@ -28,7 +28,7 @@ make_unsubscribe_report_fixtures <- function() {
 make_attendance_report_fixtures <- function(n = 1000) {
   fixtures <- list()
 
-  tables = c("orders","order_detail","special_activities","performances","seats")
+  tables = setdiff(eval(formals(read.attendance_report)$tables),"customers")
 
   fixtures[tables] <- lapply(tables,read_tessi)
 
