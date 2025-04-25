@@ -19,7 +19,18 @@ pdf_plot <- function(plot, title = NULL, subtitle = NULL) {
   print(plot)
 }
 
-pdf_table <- knitr::kable
+#' pdf_table
+#'
+#' Add a table to a pdf by generating R markdown, intended to be used  within the `expr` argument to [write_pdf].
+#' Thin wrapper around [knitr::kable] that generates latex output.
+#'
+#' @param x data frame to export
+#' @inheritDotParams knitr::kable digits row.names col.names align caption label format.args
+#'
+#' @export
+pdf_table <- function(x, ...) {
+   knitr::kable(x, format = "latex", escape = TRUE, longtable = TRUE, booktabs = TRUE)
+}
 
 #' write_pdf
 #'
