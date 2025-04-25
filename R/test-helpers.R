@@ -41,7 +41,7 @@ make_attendance_report_fixtures <- function(n = 1000) {
                                             fixtures$scans, by = "perf_no")
 
   for(table in names(fixtures)) {
-    fixtures[[table]] <- fixtures[[table]] %>% slice_tail(n) %>%
+    fixtures[[table]] <- fixtures[[table]] %>% dplyr::slice_tail(n = n) %>%
       collect %>% setDT
     customer_nos <- sample(seq(n),
                            nrow(fixtures[[table]]),
