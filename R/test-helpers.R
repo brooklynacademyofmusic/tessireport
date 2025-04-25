@@ -36,14 +36,12 @@ make_attendance_report_fixtures <- function(n = 1000) {
   fixtures$order_detail <- dplyr::slice_tail(fixtures$order_detail, n=n)
   fixtures$seats <- dplyr::semi_join(fixtures$seats, fixtures$order_detail,
                               by=c("perf_no","seat_no"))
-  fixtures$orders <- dplyr::semi_join(fixtures$orders, fixtures$order_detail,
-                                      by="order_no")
   fixtures$performances <- dplyr::semi_join(fixtures$performances,
                                             fixtures$scans, by = "perf_no")
 
   for(table in names(fixtures)) {
-
-    fixtures[[table]] <- collect(fixtures[[table]]) %>% setDT
+    fixtures[[table]] <- fixtures[[table]] %>% slice_tail(n) %>%
+      collect %>% setDT
     customer_nos <- sample(seq(n),
                            nrow(fixtures[[table]]),
                            replace = T)
