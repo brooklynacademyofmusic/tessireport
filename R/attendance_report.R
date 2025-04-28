@@ -4,16 +4,18 @@
 #' @name attendance_report
 attendance_report <- report(class="attendance_report")
 
-
-# mgos <- read_tessi("attributes") %>% collect %>% setDT %>%
-#   .[grepl("Major Gift",keyword_desc),
-#     .(mgos = paste0(paste0(keyword_value,ifelse(grepl("Prospect",keyword_desc),"*","")),
-#              collapse=", ")),by="group_customer_no"]
+# mgos <- read_tessi("attributes") %>%
+#   filter(grepl("Major Gift",keyword_desc)) %>%
+#   summarize(group_customer_no,
+#       mgos = paste0(paste0(keyword_value,ifelse(grepl("Prospect",keyword_desc),"*","")),
+#              collapse=", "), .by = "group_customer_no")
 #
-# constituencies <- read_tessi("constituencies") %>% collect %>% setDT %>%
-#   .[!grepl("Ticket|Subscriber|AutoRenew|Patron Services",constituency_desc),
-#     .(constituencies = paste0(constituency_desc,
-#                               collapse = ", ")), by = "group_customer_no"]
+# constituencies <- read_tessi("constituencies") %>%
+#   filter(!grepl("Ticket|Subscriber|AutoRenew|Patron Services",constituency_desc)) %>%
+#   summarize(constituencies = paste0(constituency_desc,
+#                               collapse = ", "), .by = "group_customer_no")
+
+
 
 #' @describeIn attendance_report load data for `attendance_report`
 #'
@@ -94,7 +96,7 @@ read.attendance_report <- function(attendance_report, list_no,
 #' @param sli_statuses `character` vector of TR_SLI_STATUS descriptions to filter by
 #' @param special_activity_statuses `character` vector of TR_SPECIAL_ACTIVITY_STATUS descriptions to filter by
 #' @param formats `character(2)` vector of date and date-time formats
-#' @param ... additional data frames to append to the output on shared columns
+#' @param ... additional data to append to the output on shared columns
 process.attendance_report <- function(attendance_report,
   sli_statuses = c(
     "Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid", "Unseated, Paid",
@@ -113,7 +115,7 @@ process.attendance_report <- function(attendance_report,
 
   data <- list2(...)
 
-  lapply(data,assert_data_frame)
+  lapply(data,tessilake:::assert_dataframeish)
   lapply(data,\(.) assert_names(names(.),must.include="group_customer_no"))
 
   attendance_report[names(attendance_report)] <- lapply(attendance_report, \(.) collect(.) %>% setDT)
@@ -156,8 +158,7 @@ process.attendance_report <- function(attendance_report,
                   fill = T, idcol = "source") %>%
     merge(attendance_report$customers, by="customer_no", all.x = T,
           suffixes = c("",".customers")) %>%
-    .[,.(id = makelist(coalesce(order_no,activity_no,id),", "),
-         name = first(trimws(coalesce(recipient_display_name,display_name))),
+    .[,.(name = first(trimws(coalesce(recipient_display_name,display_name))),
          sort_name = first(sort_name),
          perf_desc = makelist(perf_desc, ", "),
          perf_dt = makelist(if_else(perf_dt==lubridate::floor_date(perf_dt,"day"),
@@ -167,10 +168,11 @@ process.attendance_report <- function(attendance_report,
          ship_method = makelist(order_ship_method_desc,", "),
          seats = makelist(seats,"; "),
          source = paste0(source,collapse=", ")),
-      by = .(group_customer_no,
+      by = .(group_customer_no,order_no,
              date = lubridate::floor_date(perf_dt, "day"))]
 
-  attendance_report$output <- purrr::reduce(data, merge, all.x = T, .init = output)
+  attendance_report$output <- purrr::reduce(data, merge, all.x = T, .init = output) %>%
+    collect %>% setDT
 
   NextMethod()
 }
@@ -189,7 +191,7 @@ process.attendance_report <- function(attendance_report,
 #' @importFrom rlang call_args_names call_name
 write.attendance_report <- function(attendance_report,
                                      columns = list(`customer #` = group_customer_no,
-                                                  `order #` = id,
+                                                  `order #` = order_no,
                                                   name = name,
                                                   performance = perf_desc,
                                                   time = perf_dt,
@@ -200,14 +202,14 @@ write.attendance_report <- function(attendance_report,
                                                        1,1,1,1),
                                      ...) {
     columns <- rlang::enexpr(columns)
-    setkey(attendance_report$output,date,sort_name)
+    setkey(attendance_report$output,date,sort_name,perf_dt)
     assert_true(length(call_args_names(columns)) ==
                   length(column_widths))
     assert_true(call_name(columns) == "list")
 
-    table <- pdf_table(attendance_report$output[1:10,eval(columns)]) %>%
+    table <- pdf_table(attendance_report$output[,eval(columns)]) %>%
         kable_styling(latex_options=c("striped","repeat_header")) %>%
-        group_rows(index=table(attendance_report$output[1:10,date]))
+        group_rows(index=table(attendance_report$output[,date]))
 
     write_pdf(
       purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),

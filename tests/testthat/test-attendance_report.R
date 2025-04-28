@@ -122,7 +122,7 @@ test_that("process.attendance_report output contains expected columns and rows",
 
   report <- read(attendance_report,0) %>% process
 
-  columns <- c("id", "date", "group_customer_no", "name","sort_name",
+  columns <- c("order_no", "date", "group_customer_no", "name","sort_name",
                "perf_desc","perf_dt","status","ship_method","seats","source")
 
   withr::local_package("lubridate")
@@ -228,11 +228,11 @@ test_that("write.attendance_report uses the column name mapping in columns to de
   stub(write.attendance_report, "pdf_table", pdf_table)
 
   write(report,
-        columns = list(id = paste0("id#",id)),
+        columns = list(id = paste0("id#",group_customer_no)),
         column_widths = 1)
 
   expect_length(mock_args(pdf_table),1)
   expect_equal(mock_args(pdf_table)[[1]][[1]],
-               data.table(id = paste0("id#",report$output$id)))
+               data.table(id = paste0("id#",report$output$group_customer_no)))
 })
 
