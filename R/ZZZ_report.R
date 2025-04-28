@@ -6,7 +6,7 @@
 #' @param class an optional additional subclass
 #' @param ... additional parameters for subclassed methods
 #'
-#' @rdname report-class
+#' @rdname report
 #' @name report
 #' @export
 #'
@@ -23,12 +23,10 @@ report = function(x = list(),class=character()) {
 #'
 #' @export
 `%+%` = function(report_x,report_y) {
-  class_x_tail <- tail(class(report_x),2)
-  class_x <- head(class(report_x),-2)
-  class_y_tail <- tail(class(report_y),2)
-  class_y <- head(class(report_y),-2)
+  class_x <- setdiff(class(report_x),c("report","list"))
+  class_y <- setdiff(class(report_y),c("report","list"))
 
-  structure(as.list(modifyList(report_x,report_y)),class = unique(c(class_x,class_y,class_x_tail,class_y_tail)))
+  structure(as.list(modifyList(report_x,report_y)),class = unique(c(class_x,class_y,"report","list")))
 }
 
 default_function <- function(fun_name) {
