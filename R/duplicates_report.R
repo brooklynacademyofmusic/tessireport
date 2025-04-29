@@ -24,7 +24,7 @@ read.duplicates_report <- function(duplicates_report, ...) {
 #' @param routing named list, names are email addresses and values are vectors of
 #' customer numbers. Any duplicate pair that contains a matching customer number is
 #' emailed to the named email address.
-#' @inheritDotParams send_xlsx body
+#' @inheritDotParams send_email body
 #' @importFrom checkmate assert_list
 output.duplicates_report <- function(duplicates_report, routing = NULL, ...) {
   keep_customer_no <- delete_customer_no <- NULL

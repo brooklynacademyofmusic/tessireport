@@ -2,29 +2,36 @@
 % Please edit documentation in R/senders.R
 \name{send_file}
 \alias{send_file}
-\alias{output.email_report}
 \alias{send_xlsx}
+\alias{output.email_report}
 \title{send_file}
 \usage{
-\method{output}{email_report}(report, report_filename, ...)
-
-send_xlsx(
-  table,
-  subject = paste(format(substitute(table)), Sys.Date()),
-  body = paste("Sent by", Sys.info()["nodename"]),
-  emails = config::get("tessiflow.email"),
-  basename = format(substitute(table)),
+send_file(
+  filename,
+  basename = filename,
+  subject = paste(basename, Sys.Date()),
   ...
 )
+
+send_xlsx(table, basename = format(substitute(table)), ...)
+
+\method{output}{email_report}(report, report_filename = "filename", ...)
 }
 \arguments{
-\item{report}{\code{report} object}
+\item{filename}{filename to write}
+
+\item{basename}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
+
+\item{subject}{character subject of the email}
 
 \item{...}{
-  Arguments passed on to \code{\link[=send_email]{send_email}}, \code{\link[=write_xlsx]{write_xlsx}}
+  Arguments passed on to \code{\link[=send_email]{send_email}}, \code{\link[=write_xlsx]{write_xlsx}}, \code{\link[=send_email]{send_email}}, \code{\link[=send_email]{send_email}}
   \describe{
+    \item{\code{emails}}{email addresses (first will be sender)}
     \item{\code{smtp}}{named list, should contain \code{hostname} and (optionally) \code{port}, which defaults to 25.
 Additional elements will get merged with \code{...} and passed to curl, see \link[curl:curl_options]{curl::curl_options} for more details.}
+    \item{\code{body}}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
     \item{\code{engine}}{One of: \itemize{
 \item{\code{"internal"} for the internal smtp transport (default).}
 \item{\code{"curl"} for the use of curl for transport. Enable if you need STARTTLS/SSL
@@ -37,24 +44,17 @@ and/or SMTP authentication. See \code{curl::\link[curl]{send_mail}}.}
 
 \item{table}{data.table to send}
 
-\item{subject}{character subject of the email}
+\item{report}{\code{report} object}
 
-\item{body}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
-
-\item{emails}{email addresses (first will be sender)}
-
-\item{basename}{name of the file to use in the email. Defaults to the name of the table.
-A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
-
-\item{filename}{\code{character(1)} name of the field that contains the filename}
+\item{report_filename}{\code{character(1)} name of the field that contains the filename}
 }
 \description{
 Helpers for sending a file via email
 }
 \section{Functions}{
 \itemize{
-\item \code{output(email_report)}: report definition for sending a file by email
+\item \code{send_xlsx()}: Simple wrapper for \link{send_file} and \link{write_xlsx}
 
-\item \code{send_xlsx()}: Simple wrapper for \link{send_email} and \link{write_xlsx}
+\item \code{output(email_report)}: report definition for sending a file by email
 
 }}

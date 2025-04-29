@@ -8,7 +8,7 @@
 \alias{write.attendance_report}
 \title{attendance_report}
 \format{
-An object of class \code{attendance_report} (inherits from \code{report}, \code{list}) of length 0.
+An object of class \code{attendance_report} (inherits from \code{email_report}, \code{report}, \code{list}) of length 0.
 }
 \usage{
 attendance_report
@@ -29,12 +29,12 @@ attendance_report
     "Unseated, Paid", "Upgraded", "Ticketed, Paid"),
   special_activity_statuses = c("Attended", "Accepted", "Tentative"),
   formats = c("\%b \%d", "\%b \%d \%I:\%M \%p"),
-  ...
+  append = NULL
 )
 
 \method{write}{attendance_report}(
   attendance_report,
-  columns = list(`customer #` = group_customer_no, `order #` = id, name = name,
+  columns = list(`customer #` = group_customer_no, `order #` = order_no, name = name,
     performance = perf_desc, time = perf_dt, status = status, `ship method` =
     ship_method, seats = seats),
   column_widths = c(0.75, 0.75, 1.75, 1, 1, 1, 1, 1),
@@ -61,6 +61,8 @@ attendance_report
 \item{special_activity_statuses}{\code{character} vector of TR_SPECIAL_ACTIVITY_STATUS descriptions to filter by}
 
 \item{formats}{\code{character(2)} vector of date and date-time formats}
+
+\item{append}{\code{iist} of additional data to append to the output on shared columns}
 
 \item{columns}{\code{list} of named expressions mapping column names to their values,
 will be evaluated in the environment of \code{attendance_report$output}}

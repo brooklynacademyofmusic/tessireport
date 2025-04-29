@@ -4,7 +4,8 @@
 #'
 #' @param sql_report sql_report object
 #' @inheritDotParams tessilake::read_sql freshness primary_keys
-#' @inheritDotParams send_xlsx subject body emails basename
+#' @inheritDotParams send_email subject body emails
+#' @inheritDotParams send_file basename
 #' @inheritDotParams write_xlsx group currency
 #' @name sql_report
 #' @examples
