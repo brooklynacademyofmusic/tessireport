@@ -176,9 +176,10 @@ process.attendance_report <- function(attendance_report,
 #' @describeIn attendance_report output a pdf of attendance
 #' @importFrom kableExtra kable_styling group_rows column_spec
 #' @importFrom rlang call_args_names call_name
+#' @importFrom checkmate assert_true
 write.attendance_report <- function(attendance_report,
                                      columns = list(`customer #` = group_customer_no,
-                                                  `order #` = order_no,
+                                                  `order #` = coalesce(as.character(order_no),""),
                                                   name = name,
                                                   performance = perf_desc,
                                                   time = perf_dt,
@@ -198,11 +199,13 @@ write.attendance_report <- function(attendance_report,
         kable_styling(latex_options=c("striped","repeat_header")) %>%
         group_rows(index=table(attendance_report$output[,date]))
 
-    write_pdf(
+    attendance_report$filename <- write_pdf(
       purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
-                   column_spec, .init = table)
+                   column_spec, .init = table),
+      ...
     )
 
     NextMethod()
 
 }
+
