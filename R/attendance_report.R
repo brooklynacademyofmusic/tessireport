@@ -94,7 +94,7 @@ process.attendance_report <- function(attendance_report,
     "Attended", "Accepted", "Tentative"
   ),
   formats = c("%b %d","%b %d %I:%M %p"),
-  append = NULL
+  append = NULL, ...
   ) {
 
   assert_character(sli_statuses)
@@ -199,10 +199,12 @@ write.attendance_report <- function(attendance_report,
         kable_styling(latex_options=c("striped","repeat_header")) %>%
         group_rows(index=table(attendance_report$output[,date]))
 
-    attendance_report$filename <- write_pdf(
-      purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
-                   column_spec, .init = table),
-      ...
+    write_pdf_args <- intersect(list2(...), rlang::fn_fmls_names(write_pdf))
+
+    attendance_report$filename <- do.call(write_pdf,
+      c(quote(purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
+                   column_spec, .init = table)),
+        write_pdf_args)
     )
 
     NextMethod()
