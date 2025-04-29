@@ -214,7 +214,7 @@ test_that("process.attendance_report appends data from ...", {
   email <- data.table(group_customer_no = seq(1000),
                       email = paste0(sample(letters,1000,replace=T),"@bam.org"))
 
-  report <- read(attendance_report,0) %>% process(email = email)
+  report <- read(attendance_report,0) %>% process(append = list(email = email))
 
   expect_gt(nrow(report$output),0)
   expect_names(names(report$output), must.include = "email")
