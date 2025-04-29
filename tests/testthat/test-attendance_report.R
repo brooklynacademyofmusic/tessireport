@@ -144,6 +144,41 @@ test_that("process.attendance_report output contains expected columns and rows",
 
 })
 
+test_that("process.attendance_report creates seat summaries", {
+  tables <- formals(read.attendance_report)$tables %>% eval
+  read_sql <- mock(fixtures$vips,fixtures$scans)
+  read_tessi <- do.call(mock, fixtures[tables])
+  stub(read.attendance_report, "read_sql", read_sql)
+  stub(read.attendance_report, "read_tessi", read_tessi)
+
+  report <- read(attendance_report,0)
+
+  report$seats <- CJ(perf_no = 1,
+                     seat_row = LETTERS,
+                     seat_num = seq(10)) %>%
+    .[,seat_no := .I]
+
+  report$order_detail <- fixtures$order_detail %>% collect %>% setDT %>%
+    head(nrow(report$seats)) %>%
+    .[,`:=`(customer_no = rep(seq(10),26),
+            group_customer_no = rep(seq(10),26),
+            order_no = 1, perf_no = 1,
+            seat_no = .I,
+            zone_desc = rep(paste("Section",c("A","B","C")),length.out=.N),
+            sli_status_desc = "Ticketed, Paid")]
+
+  report <- process(report)
+
+  setkey(report$output,group_customer_no)
+  expect_equal(report$output[1,seats],
+               paste0(
+                c(paste("SecA:",paste0(LETTERS[seq(1,26,by=3)],1,collapse=", ")),
+                  paste("SecB:",paste0(LETTERS[seq(2,26,by=3)],1,collapse=", ")),
+                  paste("SecC:",paste0(LETTERS[seq(3,26,by=3)],1,collapse=", "))),
+                collapse = "; "))
+
+})
+
 if(!interactive()) {
 
 test_that("process.attendance_report filters by sli_status and special_activity_status", {
