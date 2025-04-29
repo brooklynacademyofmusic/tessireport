@@ -6,7 +6,7 @@
       [[1]]
       [[1]][[1]]
           customer #  order #         name performance            time         status
-               <int>    <int>       <char>      <char>          <char>         <char>
+               <int>   <char>       <char>      <char>          <char>         <char>
        1:        126 15704438 Customer 126     Sinners Apr 28 07:30 PM Ticketed, Paid
        2:        233 15712400 Customer 233     Sinners Apr 28 07:30 PM Ticketed, Paid
        3:         34 15712363  Customer 34     Sinners Apr 28 07:30 PM Ticketed, Paid
