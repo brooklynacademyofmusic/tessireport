@@ -6,7 +6,7 @@
       [[1]]
       [[1]][[1]]
       
-      \begin{longtable}{>{\raggedleft\arraybackslash}p{0.75in}>{\raggedleft\arraybackslash}p{0.75in}>{\raggedright\arraybackslash}p{1.75in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}lll}
+      \begin{longtable}{>{\raggedleft\arraybackslash}p{0.75in}>{\raggedright\arraybackslash}p{0.75in}>{\raggedright\arraybackslash}p{1.75in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}>{\raggedright\arraybackslash}p{1in}lll}
       \toprule
       group\_customer\_no & order\_no & date & name & sort\_name & perf\_desc & perf\_dt & status & ship\_method & seats & source\\
       \midrule
