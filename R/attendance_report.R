@@ -2,20 +2,8 @@
 #'
 #' Sends an email containing a spreadsheet and pdf of attendees
 #' @name attendance_report
-attendance_report <- report(class="attendance_report")
-
-# mgos <- read_tessi("attributes") %>%
-#   filter(grepl("Major Gift",keyword_desc)) %>%
-#   summarize(group_customer_no,
-#       mgos = paste0(paste0(keyword_value,ifelse(grepl("Prospect",keyword_desc),"*","")),
-#              collapse=", "), .by = "group_customer_no")
-#
-# constituencies <- read_tessi("constituencies") %>%
-#   filter(!grepl("Ticket|Subscriber|AutoRenew|Patron Services",constituency_desc)) %>%
-#   summarize(constituencies = paste0(constituency_desc,
-#                               collapse = ", "), .by = "group_customer_no")
-
-
+#' @include report.R
+attendance_report <- report(class=c("attendance_report","email_report"))
 
 #' @describeIn attendance_report load data for `attendance_report`
 #'
