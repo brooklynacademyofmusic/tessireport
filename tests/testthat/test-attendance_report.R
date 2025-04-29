@@ -231,7 +231,9 @@ test_that("write.attendance_report assembles pdf output from process.attendance_
   stub(read.attendance_report, "read_sql", read_sql)
   stub(read.attendance_report, "read_tessi", read_tessi)
 
-  report <- read(attendance_report,0) %>% process
+  report <- read(attendance_report,0,
+                 since = as.POSIXct("2025-04-28"), until = as.POSIXct("2025-05-01")
+                 ) %>% process
   # faster test
   report$output <- report$output[1:10]
   pdf_table <- mock(tessireport::pdf_table(report$output))
