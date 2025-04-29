@@ -97,7 +97,6 @@ send_xlsx <- function(table,
 #' @importFrom checkmate assert_data_table assert_character assert_file_exists
 #' @importFrom tools file_path_sans_ext file_ext
 output.email_report <- function(report, report_filename = "filename", ...) {
-  assert_data_table(table)
   assert_character(report_filename, len = 1)
   assert_character(report[[report_filename]], len = 1)
   assert_file_exists(report[[report_filename]])
