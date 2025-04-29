@@ -78,13 +78,13 @@ read.attendance_report <- function(attendance_report, list_no,
 #' * **scans** : customer_no, perf_no
 #' @export
 #' @importFrom data.table setkey
-#' @importFrom checkmate assert_data_frame assert_names
+#' @importFrom checkmate assert_list assert_names
 #' @importFrom rlang list2
 #'
 #' @param sli_statuses `character` vector of TR_SLI_STATUS descriptions to filter by
 #' @param special_activity_statuses `character` vector of TR_SPECIAL_ACTIVITY_STATUS descriptions to filter by
 #' @param formats `character(2)` vector of date and date-time formats
-#' @param ... additional data to append to the output on shared columns
+#' @param append `iist` of additional data to append to the output on shared columns
 process.attendance_report <- function(attendance_report,
   sli_statuses = c(
     "Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid", "Unseated, Paid",
@@ -94,17 +94,15 @@ process.attendance_report <- function(attendance_report,
     "Attended", "Accepted", "Tentative"
   ),
   formats = c("%b %d","%b %d %I:%M %p"),
-  ...
+  append = NULL
   ) {
 
   assert_character(sli_statuses)
   assert_character(special_activity_statuses)
   assert_character(formats,len=2)
 
-  data <- list2(...)
-
-  lapply(data,tessilake:::assert_dataframeish)
-  lapply(data,\(.) assert_names(names(.),must.include="group_customer_no"))
+  assert_list(append, null.ok = T)
+  lapply(append,tessilake:::assert_dataframeish)
 
   attendance_report[names(attendance_report)] <- lapply(attendance_report, \(.) collect(.) %>% setDT)
 
@@ -114,7 +112,7 @@ process.attendance_report <- function(attendance_report,
     # filter sli statuses
     .[trimws(sli_status_desc) %in% sli_statuses] %>%
     setkey(detail_sli_no) %>% .[,last(.SD), by=c("perf_no","seat_no")] %>%
-    merge(attendance_report$seats, by=c("perf_no","seat_no"), suffixes=c("",".seats")) %>%
+    merge(attendance_report$seats, by=c("perf_no","seat_no"), suffixes=c("",".seats"), all.x = T) %>%
 
     # build seat names
     .[,`:=`(seat_row = trimws(seat_row), seat_num = trimws(seat_num))] %>%
@@ -159,8 +157,9 @@ process.attendance_report <- function(attendance_report,
       by = .(group_customer_no,order_no,
              date = lubridate::floor_date(perf_dt, "day"))]
 
-  attendance_report$output <- purrr::reduce(data, merge, all.x = T, .init = output) %>%
-    collect %>% setDT
+  attendance_report$output <- purrr::reduce(append,
+                                            \(x,y) merge(setkey(x,NULL),setkey(y,NULL),all.x = T),
+                                            .init = output)
 
   NextMethod()
 }
