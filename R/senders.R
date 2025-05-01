@@ -94,7 +94,7 @@ send_xlsx <- function(table,
 
 #' @param report `report` object
 #' @param report_filename `character(1)` name of the field that contains the filename
-#' @inheritDotParams send_email subject body emails smtp engine
+#' @inheritDotParams send_file name
 #' @describeIn send_file report definition for sending a file by email
 #' @importFrom checkmate assert_data_table assert_character assert_file_exists
 #' @importFrom tools file_path_sans_ext file_ext
@@ -104,7 +104,9 @@ output.email_report <- function(report, report_filename = "filename", ...) {
   assert_character(report[[report_filename]], len = 1)
   assert_file_exists(report[[report_filename]])
 
-  send_file(report[[report_filename]], name = class("report")[[1]], ...)
+  send_file_args <- modifyList(list(name = class(report)[[1]]), list2(...))
+
+  do.call(send_file, c(report[[report_filename]], send_file_args))
 
   NextMethod()
 

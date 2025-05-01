@@ -23,7 +23,7 @@ send_xlsx(table, basename = format(substitute(table)), ...)
 \item{subject}{character subject of the email}
 
 \item{...}{
-  Arguments passed on to \code{\link[=send_email]{send_email}}, \code{\link[=write_xlsx]{write_xlsx}}, \code{\link[=send_email]{send_email}}, \code{\link[=send_email]{send_email}}
+  Arguments passed on to \code{\link[=send_email]{send_email}}, \code{\link[=write_xlsx]{write_xlsx}}, \code{\link[=send_email]{send_email}}, \code{\link[=send_file]{send_file}}
   \describe{
     \item{\code{emails}}{email addresses (first will be sender)}
     \item{\code{smtp}}{named list, should contain \code{hostname} and (optionally) \code{port}, which defaults to 25.
