@@ -3,6 +3,7 @@
 #' Sends an email containing a spreadsheet and pdf of attendees
 #' @name attendance_report
 #' @include report.R
+#' @export
 attendance_report <- report(class=c("attendance_report","email_report"))
 
 #' @describeIn attendance_report load data for `attendance_report`
