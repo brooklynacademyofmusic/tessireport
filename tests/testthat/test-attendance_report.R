@@ -294,3 +294,17 @@ test_that("write.attendance_report passes on args to write_pdf", {
   expect_length(mock_args(write_pdf),1)
   expect_equal(mock_args(write_pdf)[[1]][[".title"]],"Title")
 })
+
+test_that("write.attendance_report exits gracefully if there's nothing to do", {
+  # faster test
+  report <- report(list(output = data.table(date=numeric(0),
+                                            sort_name=character(0),
+                                            perf_dt=numeric(0))),
+                   "attendance_report")
+  write_pdf <- mock()
+  stub(write.attendance_report, "write_pdf", write_pdf)
+
+  write(report)
+
+  expect_length(mock_args(write_pdf),0)
+})

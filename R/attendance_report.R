@@ -191,18 +191,22 @@ write.attendance_report <- function(attendance_report,
                   length(column_widths))
     assert_true(call_name(columns) == "list")
 
-    table <- pdf_table(attendance_report$output[,eval(columns)]) %>%
-        kable_styling(latex_options=c("striped","repeat_header")) %>%
-        group_rows(index=table(attendance_report$output[,date]))
+    if(nrow(attendance_report$output) > 0) {
 
-    write_pdf_args <- list2(...) %>%
-      .[intersect(names(.), rlang::fn_fmls_names(write_pdf))]
+      table <- pdf_table(attendance_report$output[,eval(columns)]) %>%
+          kable_styling(latex_options=c("striped","repeat_header")) %>%
+          group_rows(index=table(attendance_report$output[,date]))
 
-    attendance_report$filename <- do.call(write_pdf,
-      c(quote(purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
-                   column_spec, .init = table)),
-        write_pdf_args)
-    )
+      write_pdf_args <- list2(...) %>%
+        .[intersect(names(.), rlang::fn_fmls_names(write_pdf))]
+
+      attendance_report$filename <- do.call(write_pdf,
+        c(quote(purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
+                     column_spec, .init = table)),
+          write_pdf_args)
+      )
+
+    }
 
     NextMethod()
 
