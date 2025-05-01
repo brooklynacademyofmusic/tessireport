@@ -73,8 +73,6 @@ send_file <- function(filename, name = basename(filename),
 
   do.call(send_email,send_email_args)
 
-  NextMethod()
-
 }
 
 #' @describeIn send_file Simple wrapper for [send_file] and [write_xlsx]
