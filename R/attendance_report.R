@@ -154,7 +154,7 @@ process.attendance_report <- function(attendance_report,
          ship_method = makelist(order_ship_method_desc,", "),
          seats = makelist(seats,"; "),
          source = paste0(source,collapse=", ")),
-      by = .(group_customer_no,order_no = coalesce(as.character(order_no),""),
+      by = .(group_customer_no,order_no,
              date = lubridate::floor_date(perf_dt, "day"))]
 
   attendance_report$output <- purrr::reduce(append,
@@ -179,7 +179,7 @@ process.attendance_report <- function(attendance_report,
 #' @importFrom checkmate assert_true
 write.attendance_report <- function(attendance_report,
                                      columns = list(`customer #` = group_customer_no,
-                                                  `order #` = order_no,
+                                                  `order #` = coalesce(as.character(order_no),""),
                                                   name = name,
                                                   performance = perf_desc,
                                                   time = perf_dt,
