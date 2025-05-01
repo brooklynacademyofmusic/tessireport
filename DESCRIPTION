@@ -68,6 +68,7 @@ Config/testthat/edition: 3
 Remotes: 
     brooklynacademyofmusic/tessilake,
     brooklynacademyofmusic/tessistream,
+    brooklynacademyofmusic/sendmailR,
     skysyzygy/ffbase/pkg,
     mlr-org/mlr3proba,
     hadley/emo
