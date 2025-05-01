@@ -59,11 +59,12 @@ send_email <- function(subject, body = paste("Sent by", Sys.info()["nodename"]),
 #' A timestamp and extension will be appended and passed on to [send_email] as the name of `attachments`.
 #' @inheritParams send_email
 #' @inheritDotParams send_email subject body emails smtp engine
-send_file <- function(filename, basename = filename,
-                      subject = paste(basename, Sys.Date()), ...) {
+#' @export
+send_file <- function(filename, name = basename(filename),
+                      subject = paste(name, Sys.Date()), ...) {
   assert_character(filename, len = 1)
 
-  name <- paste0(file_path_sans_ext(basename),"_",Sys.Date(),
+  name <- paste0(file_path_sans_ext(name),"_",Sys.Date(),
                  ".",file_ext(filename))
 
   send_email_args <- modifyList(list(attachments = setNames(filename,name),
@@ -81,6 +82,7 @@ send_file <- function(filename, basename = filename,
 #' @param table data.table to send
 #' @inheritDotParams write_xlsx group currency
 #' @inheritDotParams send_email subject body emails
+#' @export
 send_xlsx <- function(table,
                       basename = format(substitute(table)), ...) {
   assert_data_table(table)
@@ -96,12 +98,13 @@ send_xlsx <- function(table,
 #' @describeIn send_file report definition for sending a file by email
 #' @importFrom checkmate assert_data_table assert_character assert_file_exists
 #' @importFrom tools file_path_sans_ext file_ext
+#' @export
 output.email_report <- function(report, report_filename = "filename", ...) {
   assert_character(report_filename, len = 1)
   assert_character(report[[report_filename]], len = 1)
   assert_file_exists(report[[report_filename]])
 
-  send_file(report[[report_filename]], ...)
+  send_file(report[[report_filename]], name = class("report")[[1]], ...)
 
   NextMethod()
 
