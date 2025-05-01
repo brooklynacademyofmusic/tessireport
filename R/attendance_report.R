@@ -199,7 +199,8 @@ write.attendance_report <- function(attendance_report,
         kable_styling(latex_options=c("striped","repeat_header")) %>%
         group_rows(index=table(attendance_report$output[,date]))
 
-    write_pdf_args <- intersect(list2(...), rlang::fn_fmls_names(write_pdf))
+    write_pdf_args <- list2(...) %>%
+      .[intersect(names(.), rlang::fn_fmls_names(write_pdf))]
 
     attendance_report$filename <- do.call(write_pdf,
       c(quote(purrr::reduce2(seq_along(column_widths), paste0(column_widths,"in"),
@@ -210,4 +211,3 @@ write.attendance_report <- function(attendance_report,
     NextMethod()
 
 }
-

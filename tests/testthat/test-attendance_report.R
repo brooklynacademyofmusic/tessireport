@@ -273,3 +273,24 @@ test_that("write.attendance_report uses the column name mapping in columns to de
                data.table(id = paste0("id#",report$output$group_customer_no)))
 })
 
+test_that("write.attendance_report passes on args to write_pdf", {
+  tables <- formals(read.attendance_report)$tables %>% eval
+  read_sql <- mock(fixtures$vips,fixtures$scans)
+  read_tessi <- do.call(mock, fixtures[tables])
+
+  stub(read.attendance_report, "read_sql", read_sql)
+  stub(read.attendance_report, "read_tessi", read_tessi)
+
+  report <- read(attendance_report,0) %>% process
+  # faster test
+  report$output <- report$output[1:10]
+  write_pdf <- mock()
+  stub(write.attendance_report, "write_pdf", write_pdf)
+  stub(write.attendance_report, "rlang::fn_fmls_names",
+       rlang::fn_fmls_names(tessireport::write_pdf))
+
+  write(report,.title = "Title",.author = "Author")
+
+  expect_length(mock_args(write_pdf),1)
+  expect_equal(mock_args(write_pdf)[[1]][[".title"]],"Title")
+})
