@@ -25,9 +25,9 @@ attendance_report
 
 \method{process}{attendance_report}(
   attendance_report,
-  sli_statuses = c("Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid",
-    "Unseated, Paid", "Upgraded", "Ticketed, Paid"),
-  special_activity_statuses = c("Attended", "Accepted", "Tentative"),
+  filter = sli_status_desc \%in\% c("Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid",
+    "Unseated, Paid", "Upgraded", "Ticketed, Paid") | status_desc \%in\% c("Attended",
+    "Accepted", "Tentative"),
   formats = c("\%b \%d", "\%b \%d \%I:\%M \%p"),
   append = NULL,
   ...
@@ -57,13 +57,11 @@ attendance_report
 
 \item{...}{additional parameters passed on to \link{pdf_table}}
 
-\item{sli_statuses}{\code{character} vector of TR_SLI_STATUS descriptions to filter by}
-
-\item{special_activity_statuses}{\code{character} vector of TR_SPECIAL_ACTIVITY_STATUS descriptions to filter by}
+\item{filter}{\code{expression} to filter the output by, as with \link[rlang:eval_tidy]{rlang::eval_tidy}}
 
 \item{formats}{\code{character(2)} vector of date and date-time formats}
 
-\item{append}{\code{iist} of additional data to append to the output on shared columns}
+\item{append}{\code{list} of additional data to append to the output on shared columns}
 
 \item{columns}{\code{list} of named expressions mapping column names to their values,
 will be evaluated in the environment of \code{attendance_report$output}}

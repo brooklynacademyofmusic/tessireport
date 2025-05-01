@@ -83,7 +83,7 @@ read.attendance_report <- function(attendance_report, list_no,
 #'
 #' @param filter `expression` to filter the output by, as with [rlang::eval_tidy]
 #' @param formats `character(2)` vector of date and date-time formats
-#' @param append `iist` of additional data to append to the output on shared columns
+#' @param append `list` of additional data to append to the output on shared columns
 process.attendance_report <- function(attendance_report,
                                       filter =
     sli_status_desc %in% c(
