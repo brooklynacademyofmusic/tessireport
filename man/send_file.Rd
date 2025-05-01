@@ -8,8 +8,8 @@
 \usage{
 send_file(
   filename,
-  basename = filename,
-  subject = paste(basename, Sys.Date()),
+  name = basename(filename),
+  subject = paste(name, Sys.Date()),
   ...
 )
 
@@ -19,9 +19,6 @@ send_xlsx(table, basename = format(substitute(table)), ...)
 }
 \arguments{
 \item{filename}{filename to write}
-
-\item{basename}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
-A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
 
 \item{subject}{character subject of the email}
 
@@ -43,6 +40,9 @@ and/or SMTP authentication. See \code{curl::\link[curl]{send_mail}}.}
   }}
 
 \item{table}{data.table to send}
+
+\item{basename}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
 
 \item{report}{\code{report} object}
 

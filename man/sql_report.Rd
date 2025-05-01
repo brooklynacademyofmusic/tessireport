@@ -25,8 +25,6 @@ SQL metadata.}
     \item{\code{emails}}{email addresses (first will be sender)}
     \item{\code{subject}}{character subject of the email}
     \item{\code{body}}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
-    \item{\code{basename}}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
-A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
     \item{\code{group}}{character name of column to be used for grouping/banding the data. Band color will change when column value changes.}
     \item{\code{currency}}{character vector of column to be used for grouping/banding the data. Band color will change when column value changes.}
   }}

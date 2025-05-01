@@ -35,9 +35,9 @@ attendance_report
 
 \method{write}{attendance_report}(
   attendance_report,
-  columns = list(`customer #` = group_customer_no, `order #` = coalesce(order_no, ""),
-    name = name, performance = perf_desc, time = perf_dt, status = status, `ship method`
-    = ship_method, seats = seats),
+  columns = list(`customer #` = group_customer_no, `order #` =
+    coalesce(as.character(order_no), ""), name = name, performance = perf_desc, time =
+    perf_dt, status = status, `ship method` = ship_method, seats = seats),
   column_widths = c(0.75, 0.75, 1.75, 1, 1, 1, 1, 1),
   ...
 )
