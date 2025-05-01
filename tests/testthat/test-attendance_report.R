@@ -181,18 +181,18 @@ test_that("process.attendance_report creates seat summaries", {
 
 if(!interactive()) {
 
-test_that("process.attendance_report filters by sli_status and special_activity_status", {
+test_that("process.attendance_report filters by filter", {
   tables <- formals(read.attendance_report)$tables %>% eval
   read_sql <- mock(fixtures$vips,fixtures$scans)
   read_tessi <- do.call(mock, fixtures[tables])
   stub(read.attendance_report, "read_sql", read_sql)
   stub(read.attendance_report, "read_tessi", read_tessi)
 
-  sli_statuses <- fixtures$order_detail$sli_status_desc %>% as.vector %>% trimws %>% unique
-  sa_statuses <- fixtures$special_activities$status_desc %>% as.vector %>% trimws %>% unique
+  sli_statuses <- fixtures$order_detail$sli_status_desc %>% as.vector %>% unique %>% trimws
+  sa_statuses <- fixtures$special_activities$status_desc %>% as.vector %>% unique %>% trimws
 
   report <- read(attendance_report,0,since=as.POSIXct("1900-01-01"),until=as.POSIXct("2100-01-01")) %>%
-    process(sli_statuses = sli_statuses[1], special_activity_statuses = sa_statuses[1])
+    process(filter = trimws(sli_status_desc) == !!sli_statuses[1] | trimws(status_desc) == !!sa_statuses[1])
 
   expect_gt(nrow(report$output),0)
   expect_equal(report$output[status %in% sli_statuses[-1]], report$output[integer(0)])

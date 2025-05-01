@@ -81,24 +81,22 @@ read.attendance_report <- function(attendance_report, list_no,
 #' @importFrom checkmate assert_list assert_names
 #' @importFrom rlang list2
 #'
-#' @param sli_statuses `character` vector of TR_SLI_STATUS descriptions to filter by
-#' @param special_activity_statuses `character` vector of TR_SPECIAL_ACTIVITY_STATUS descriptions to filter by
+#' @param filter `expression` to filter the output by, as with [rlang::eval_tidy]
 #' @param formats `character(2)` vector of date and date-time formats
 #' @param append `iist` of additional data to append to the output on shared columns
 process.attendance_report <- function(attendance_report,
-  sli_statuses = c(
-    "Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid", "Unseated, Paid",
-    "Upgraded", "Ticketed, Paid"
-  ),
-  special_activity_statuses = c(
-    "Attended", "Accepted", "Tentative"
-  ),
+                                      filter =
+    sli_status_desc %in% c(
+      "Unseated, Unpaid", "Seated, Unpaid", "Seated, Paid", "Unseated, Paid",
+      "Upgraded", "Ticketed, Paid"
+    ) |
+    status_desc %in% c(
+      "Attended", "Accepted", "Tentative"
+    ),
   formats = c("%b %d","%b %d %I:%M %p"),
   append = NULL, ...
   ) {
 
-  assert_character(sli_statuses)
-  assert_character(special_activity_statuses)
   assert_character(formats,len=2)
 
   assert_list(append, null.ok = T)
@@ -109,8 +107,6 @@ process.attendance_report <- function(attendance_report,
   makelist <- \(l,s) paste0(sort(unique(trimws(l))), collapse = s)
 
   orders <- attendance_report$order_detail %>%
-    # filter sli statuses
-    .[trimws(sli_status_desc) %in% sli_statuses] %>%
     setkey(detail_sli_no) %>% .[,last(.SD), by=c("perf_no","seat_no")] %>%
     merge(attendance_report$seats, by=c("perf_no","seat_no"), suffixes=c("",".seats"), all.x = T) %>%
 
@@ -134,7 +130,6 @@ process.attendance_report <- function(attendance_report,
                        ifelse(admission_adult > 1,"s",""))]
 
   activities <- attendance_report$special_activities %>%
-    .[trimws(status_desc) %in% special_activity_statuses] %>%
     tessistream::setunite("perf_desc", activity_desc, perf_desc, sep = ": ", na.rm = T) %>%
     .[,seats := paste0(num_attendees, " seat",
                      ifelse(num_attendees > 1,"s",""))]
@@ -144,7 +139,8 @@ process.attendance_report <- function(attendance_report,
                   fill = T, idcol = "source") %>%
     merge(attendance_report$customers, by="customer_no", all.x = T,
           suffixes = c("",".customers")) %>%
-    .[,.(name = first(trimws(coalesce(recipient_display_name,display_name))),
+    .[eval(rlang::enexpr(filter)),
+      .(name = first(trimws(coalesce(recipient_display_name,display_name))),
          sort_name = first(sort_name),
          perf_desc = makelist(perf_desc, ", "),
          perf_dt = makelist(if_else(perf_dt==lubridate::floor_date(perf_dt,"day"),
