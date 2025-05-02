@@ -23,6 +23,8 @@ read.attendance_report <- function(attendance_report, list_no,
                                    since = Sys.time(), until = as.POSIXct(Sys.Date() + 3),
                                    refresh = TRUE, ...) {
 
+  perf_dt <- attend_dt <- sp_act_dt <- customer_no <- recipient_no <- NULL
+
   assert_integerish(list_no,len=1)
   assert_character(tables,min.len=1)
   assert_posixct(since,len=1)
@@ -97,6 +99,12 @@ process.attendance_report <- function(attendance_report,
   formats = c("%b %d","%b %d %I:%M %p"),
   append = NULL, ...
   ) {
+
+  . <- sli_status_desc <- status_desc <- detail_sli_no <- seat_row <- seat_num <- seat_desc <-
+    zone_desc <- zone_short_desc <- customer_no <- group_customer_no <- admission_adult <-
+    activity_desc <- perf_desc <- num_attendees <- recipient_display_name <- display_name <-
+    sort_name <- perf_dt <- order_ship_method_desc <- name <- seats <- ship_method <-
+    source <- order_no <- NULL
 
   assert_character(formats,len=2)
 
@@ -186,6 +194,10 @@ write.attendance_report <- function(attendance_report,
                                      column_widths = c(.75,.75,1.75,1,
                                                        1,1,1,1),
                                      ...) {
+
+    . <- sort_name <- perf_dt <- date <- group_customer_no <- order_no <-
+      name <- perf_desc <- perf_dt <- status <- ship_method <- seats <- NULL
+
     columns <- rlang::enexpr(columns)
     setkey(attendance_report$output,date,sort_name,perf_dt)
     assert_true(length(call_args_names(columns)) ==

@@ -11,6 +11,8 @@
 #' @importFrom dplyr filter select collect mutate group_by summarize n_distinct
 crossovers_prod <- function(prod_season_no, min_customers = 10) {
 
+  . <- n_customers <- group_customer_no <- rate <- NULL
+
   assert_integerish(prod_season_no)
   assert_integerish(min_customers,len = 1)
 

@@ -13,7 +13,8 @@ contributions_model <- report(class=c("contributions_model","mlr_report"))
 #' @param since Date/POSIXct data on or after this date will be loaded and possibly used for training
 #' @param chunk_size integer(1) number of rows per partition
 #' @param ... not used
-#' @importFrom ff delete
+#' @importFrom tidyselect all_of
+#'
 contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
                                   rebuild_dataset = NULL, chunk_size = 1e7, ...) {
 

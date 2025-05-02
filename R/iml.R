@@ -109,6 +109,8 @@ iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
 #' @return string explaining the feature values
 parse_shapley <- function(explanation, filter = "=0|=NA", n = 3) {
 
+  . <- rank <- phi <- phi.var <- feature.value <- value <- value_fmt <- feature <- NULL
+
   assert_data_frame(explanation)
   assert_names(colnames(explanation), must.include = c("phi","phi.var","feature.value"))
 

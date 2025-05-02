@@ -16,6 +16,7 @@
 #' @inheritDotParams dataset_rollback_event by event rollback_cols
 #' @inheritDotParams dataset_normalize_timestamps timestamp_cols
 #' @importFrom checkmate assert_names assert_false test_class assert_vector assert_character assert_data_table
+#' @importFrom tidyselect all_of
 #' @return NULL
 dataset_chunk_write <- function(dataset, partition,
                                 dataset_name,

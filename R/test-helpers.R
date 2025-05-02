@@ -26,6 +26,8 @@ make_unsubscribe_report_fixtures <- function() {
 # attendance_report -------------------------------------------------------
 
 make_attendance_report_fixtures <- function(n = 1000) {
+  customer_no <- group_customer_no <- NULL
+
   withr::local_envvar(R_CONFIG_FILE="")
   fixtures <- list()
 
@@ -69,6 +71,8 @@ make_attendance_report_fixtures <- function(n = 1000) {
 # contributions_model -----------------------------------------------------
 
 make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
+
+  timestamp <- partition <- NULL
 
   withr::local_envvar(R_CONFIG_FILE="")
   withr::local_package("mockery")
