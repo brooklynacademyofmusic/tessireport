@@ -173,15 +173,15 @@ train.contributions_model <- function(model, num_trees = 512, downsample_train =
                    filter = flt("importance"),
                    filter.frac = to_tune(.1,.67))
 
-  logreg <- as_learner(importance_filter %>>% lrn("classif.log_reg", predict_type = "prob"), id = "logreg")
+  logreg <- as_learner(importance_filter %>>% lrn("classif.log_reg", predict_type = "prob"))
   ranger <- as_learner(lrn("classif.ranger", predict_type = "prob",
                            mtry.ratio = to_tune(.1,1),
                            sample.fraction = to_tune(.1,1),
-                           num.trees = to_tune(p_int(num_trees/8,num_trees,tags="budget"))), id = "ranger")
+                           num.trees = to_tune(p_int(num_trees/8,num_trees,tags="budget"))))
 
   stacked <- as_learner(preprocess %>>% ppl("stacking", c(logreg,ranger),
                                                            lrn("classif.log_reg", predict_type = "prob"),
-                                                           use_features = FALSE), id = "stacked")
+                                                           use_features = FALSE))
   stacked_tuned <- tune(
       tuner = tnr("hyperband",eta=2),
       task = model$task,
