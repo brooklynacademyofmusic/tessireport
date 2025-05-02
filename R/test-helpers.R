@@ -25,10 +25,11 @@ make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
   withr::local_package("mockery")
 
   if (rebuild) {
-    stream <- read_cache("stream","stream",include_partition=T)
-    max_partition = summarise(stream,max(partition)) %>% collect %>% as.numeric
+    stream <- read_cache("stream","stream",include_partition=T) %>%
+      filter(timestamp < Sys.Date())
+    max_partition = summarise(stream,max(partition)) %>% collect %>% as.numeric %>% as.POSIXct
     stream_subset <- filter(stream, partition == max_partition) %>% dplyr::compute()
-    stub(contributions_dataset,"read_cache",stream_subset)
+    stub(contributions_dataset,"read_cache",mock(stream_subset,data.frame(date = numeric(0))))
     contributions_dataset(rebuild_dataset = T)
   }
 
@@ -44,7 +45,7 @@ make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
                 street1 = NULL,
                 street2 = NULL,
                 subscriberid = NULL
-                )] %>%
+                )] %>% as.data.frame() %>%
     arrow::write_parquet("tests/testthat/test-contributions_model.parquet")
 
 }
