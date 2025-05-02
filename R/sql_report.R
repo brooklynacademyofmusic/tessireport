@@ -60,5 +60,5 @@ output.sql_report <- function(sql_report, query, ...) {
 }
 
 #' @export
-process.sql_report <- write.sql_report <- \(sql_report...) NextMethod()
+process.sql_report <- write.sql_report <- \(...) NextMethod()
 

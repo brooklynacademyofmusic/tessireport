@@ -18,6 +18,7 @@ Config/Needs/website:
 Depends:
     R (>= 3.5.0)
 Imports: 
+    base64enc,
     bbotk,
     bestNormalize,
     checkmate,
