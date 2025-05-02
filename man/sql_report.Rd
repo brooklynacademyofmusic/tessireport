@@ -17,16 +17,16 @@
 \item{sql_report}{sql_report object}
 
 \item{...}{
-  Arguments passed on to \code{\link[tessilake:read_sql]{tessilake::read_sql}}, \code{\link[=send_xlsx]{send_xlsx}}, \code{\link[=write_xlsx]{write_xlsx}}
+  Arguments passed on to \code{\link[tessilake:read_sql]{tessilake::read_sql}}, \code{\link[=send_email]{send_email}}, \code{\link[=send_file]{send_file}}, \code{\link[=write_xlsx]{write_xlsx}}
   \describe{
     \item{\code{primary_keys}}{character vector, primary keys of the table. \code{read_sql_table} will attempt to identify the primary keys using
 SQL metadata.}
     \item{\code{freshness}}{the returned data will be at least this fresh}
-    \item{\code{basename}}{name of the file to use in the email. Defaults to the name of the table.
-A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
     \item{\code{emails}}{email addresses (first will be sender)}
     \item{\code{subject}}{character subject of the email}
     \item{\code{body}}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
+    \item{\code{name}}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
     \item{\code{group}}{character name of column to be used for grouping/banding the data. Band color will change when column value changes.}
     \item{\code{currency}}{character vector of column to be used for grouping/banding the data. Band color will change when column value changes.}
   }}

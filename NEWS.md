@@ -1,3 +1,8 @@
+# tessireport 0.3.0
+
+* contributions model for first contributions
+* attendance report with pdf output
+
 # tessireport 0.1.0
 
 * First version:

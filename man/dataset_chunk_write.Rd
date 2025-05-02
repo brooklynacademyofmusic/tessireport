@@ -21,7 +21,7 @@ be an arrow_dplyr_query}
 
 \item{dataset_name}{\code{character} cache directory where the partition will be saved in}
 
-\item{rows}{\link{data.table} identifying rows of the dataset to load; will be appended to dataset}
+\item{rows}{\link[data.table:data.table]{data.table} identifying rows of the dataset to load; will be appended to dataset}
 
 \item{cols}{\code{character} columns of the dataset to add to partition}
 

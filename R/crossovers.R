@@ -1,6 +1,6 @@
 #' crossovers_prod
 #'
-#' Simple analysis of crossover audiences for particular production(s), returns a [data.table] of productions,
+#' Simple analysis of crossover audiences for particular production(s), returns a [data.table][data.table::data.table-package] of productions,
 #' ranked from highest to lowest % crossover.
 #'
 #' @param prod_season_no [integer] vector of production season numbers to search for crossovers against
@@ -10,6 +10,8 @@
 #' @importFrom tessilake read_tessi
 #' @importFrom dplyr filter select collect mutate group_by summarize n_distinct
 crossovers_prod <- function(prod_season_no, min_customers = 10) {
+
+  . <- n_customers <- group_customer_no <- rate <- NULL
 
   assert_integerish(prod_season_no)
   assert_integerish(min_customers,len = 1)

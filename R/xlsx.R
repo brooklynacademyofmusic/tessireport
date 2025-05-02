@@ -1,4 +1,22 @@
 
+#' @describeIn write_xlsx report
+#' @param report `report` object
+#' @param report_data `character(1)` name of the field in `report` that contains the data
+#' @param columns `list` of named expressions mapping column names to their values,
+#' will be evaluated in the environment of `attendance_report[[data]]`
+#' @inheritDotParams write_xlsx filename group currency overwrite
+#' @export
+write.xlsx_report <- function(report, report_data, columns = NULL, ...) {
+  columns <- rlang::enexpr(columns)
+  assert_true(call_name(columns) == "list")
+
+  output <- setDT(report[[report_data]])[,eval(columns)]
+  write_xlsx(output, ...)
+
+  NextMethod()
+
+}
+
 #' write_xlsx
 #'
 #' @description
