@@ -43,7 +43,7 @@ attendance_report
 )
 }
 \arguments{
-\item{attendance_report}{}
+\item{attendance_report}{\code{attendance_report} object}
 
 \item{list_no}{\code{integer(1)} list number to load customers from}
 

@@ -169,8 +169,6 @@ process.attendance_report <- function(attendance_report,
   NextMethod()
 }
 
-#' @param attendance_report
-#'
 #' @param columns `list` of named expressions mapping column names to their values,
 #' will be evaluated in the environment of `attendance_report$output`
 #' @param column_widths `double` vector of column widths in inches; must be the same

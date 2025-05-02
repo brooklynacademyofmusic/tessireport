@@ -1,6 +1,6 @@
 #' crossovers_prod
 #'
-#' Simple analysis of crossover audiences for particular production(s), returns a [data.table] of productions,
+#' Simple analysis of crossover audiences for particular production(s), returns a [data.table][data.table::data.table-package] of productions,
 #' ranked from highest to lowest % crossover.
 #'
 #' @param prod_season_no [integer] vector of production season numbers to search for crossovers against

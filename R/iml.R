@@ -1,7 +1,7 @@
 #' @name iml
 #' @title Interpretable machine learning for mlr_report
 #' @description
-#' Simple wrappers around [iml-package] classes to provide a more streamlined approach for generating
+#' Simple wrappers around [iml][iml::iml-package] classes to provide a more streamlined approach for generating
 #' interpretable plots and explanatory data.
 #' @return
 #' * `iml_predictor()`: [iml::Predictor]
@@ -19,7 +19,7 @@ NULL
 #' them.
 #'
 #' @param model [mlr3::Learner] model, pre-trained
-#' @param data [data.table] of a test dataset
+#' @param data [data.table][data.table::data.table-package] of a test dataset
 #' @param predict.function `function` function to predict newdata. The first argument is the model, the second the newdata.
 #' @param y `character(1)`|[numeric]|[factor] The target vector or (preferably) the name of the target column in the data argument. Predictor tries to infer the target automatically from the model.
 #'
