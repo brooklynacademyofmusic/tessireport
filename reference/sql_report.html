@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tessireport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@
     </div>
 
     <div class="ref-description section level2">
-    <p>Report that wraps the functionality of <a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a> and <a href="send_xlsx.html">send_xlsx</a></p>
+    <p>Report that wraps the functionality of <a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a> and <a href="send_file.html">send_xlsx</a></p>
     </div>
 
     <div class="section level2">
@@ -66,16 +66,12 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a></code>, <code><a href="send_xlsx.html">send_xlsx</a></code>, <code><a href="write_xlsx.html">write_xlsx</a></code></p><dl><dt><code>primary_keys</code></dt>
+<dd><p>Arguments passed on to <code><a href="https://bamorg-my.sharepoint.com/personal/ssyzygy_bam_org/Documents/documentation/tessilake/reference/read_sql.html" class="external-link">tessilake::read_sql</a></code>, <code><a href="send_email.html">send_email</a></code>, <code><a href="send_file.html">send_file</a></code>, <code><a href="write_xlsx.html">write_xlsx</a></code></p><dl><dt><code>primary_keys</code></dt>
 <dd><p>character vector, primary keys of the table. <code>read_sql_table</code> will attempt to identify the primary keys using
 SQL metadata.</p></dd>
 
     <dt><code>freshness</code></dt>
 <dd><p>the returned data will be at least this fresh</p></dd>
-
-    <dt><code>basename</code></dt>
-<dd><p>name of the file to use in the email. Defaults to the name of the table.
-A timestamp and extension will be appended and passed on to <a href="send_email.html">send_email</a> as the name of <code>attachments</code>.</p></dd>
 
     <dt><code>emails</code></dt>
 <dd><p>email addresses (first will be sender)</p></dd>
@@ -85,6 +81,10 @@ A timestamp and extension will be appended and passed on to <a href="send_email.
 
     <dt><code>body</code></dt>
 <dd><p>html of message or a list containing <a href="https://rdrr.io/pkg/sendmailR/man/mime_part.html" class="external-link">sendmailR::mime_part</a> objects.</p></dd>
+
+    <dt><code>name</code></dt>
+<dd><p>name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to <a href="send_email.html">send_email</a> as the name of <code>attachments</code>.</p></dd>
 
     <dt><code>group</code></dt>
 <dd><p>character name of column to be used for grouping/banding the data. Band color will change when column value changes.</p></dd>
@@ -128,7 +128,7 @@ A timestamp and extension will be appended and passed on to <a href="send_email.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>
