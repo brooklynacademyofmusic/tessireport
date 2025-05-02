@@ -5,6 +5,7 @@
 #' @param columns `list` of named expressions mapping column names to their values,
 #' will be evaluated in the environment of `attendance_report[[data]]`
 #' @inheritDotParams write_xlsx filename group currency overwrite
+#' @export
 write.xlsx_report <- function(report, report_data, columns = NULL, ...) {
   columns <- rlang::enexpr(columns)
   assert_true(call_name(columns) == "list")

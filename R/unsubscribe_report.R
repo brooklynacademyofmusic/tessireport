@@ -19,7 +19,7 @@ unsubscribe_report <- report(class="unsubscribe_report")
 #'                          TRUE ~ list(c("kburke@bam.org","esearles@bam.org"))))
 #' }
 #'
-run.unsubscribe_report <- function(unsubscribe_report, ...) NextMethod()
+NULL
 
 #' @describeIn unsubscribe_report reads unsubscribe_report data
 #' Loads data from

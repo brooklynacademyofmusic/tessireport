@@ -69,4 +69,5 @@ output.contributions_model_report <- function(report, subject = paste("Contribut
   NextMethod()
 }
 
-write.contributions_model_report <- function(...) {NextMethod()}
+#' @export
+write.contributions_model_report <- function(report,...) {NextMethod()}

@@ -18,7 +18,6 @@ Config/Needs/website:
 Depends:
     R (>= 3.5.0)
 Imports: 
-    base64enc,
     bbotk,
     bestNormalize,
     checkmate,
@@ -29,7 +28,6 @@ Imports:
     DBI,
     dplyr,
     duckdb,
-    emo,
     furrr,
     future,
     ggplot2,
@@ -44,7 +42,6 @@ Imports:
     mlr3db,
     mlr3verse,
     openxlsx,
-    patchwork,
     purrr,
     ranger,
     rlang,

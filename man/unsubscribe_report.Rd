@@ -2,14 +2,11 @@
 % Please edit documentation in R/unsubscribe_report.R
 \name{unsubscribe_report}
 \alias{unsubscribe_report}
-\alias{run.unsubscribe_report}
 \alias{read.unsubscribe_report}
 \alias{process.unsubscribe_report}
 \alias{output.unsubscribe_report}
 \title{unsubscribe_report}
 \usage{
-\method{run}{unsubscribe_report}(unsubscribe_report, ...)
-
 \method{read}{unsubscribe_report}(unsubscribe_report, customers, ...)
 
 \method{process}{unsubscribe_report}(unsubscribe_report, ...)
@@ -25,9 +22,9 @@
 \arguments{
 \item{unsubscribe_report}{unsubscribe_report object}
 
-\item{...}{not used}
-
 \item{customers}{integer vector of customer numbers to load}
+
+\item{...}{not used}
 
 \item{since}{date, start date for filtering the returned data}
 
