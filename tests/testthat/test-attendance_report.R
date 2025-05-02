@@ -4,6 +4,9 @@ withr::local_package("checkmate")
 fixtures <- readRDS(rprojroot::find_testthat_root_file("attendance_report.Rds")) %>%
   lapply(arrow::as_arrow_table)
 
+stub(read.attendance_report,"Sys.time", as.POSIXct("2025-05-01 00:00:00"))
+stub(read.attendance_report,"Sys.Date", as.Date("2025-05-01"))
+
 test_that("read.attendance_report reads from all tables and returns an `attendance_report` object", {
 
   tables <- formals(read.attendance_report)$tables %>% eval
