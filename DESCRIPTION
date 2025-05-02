@@ -30,8 +30,6 @@ Imports:
     dplyr,
     duckdb,
     emo,
-    ff,
-    ffbase,
     furrr,
     future,
     ggplot2,
