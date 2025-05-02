@@ -55,7 +55,7 @@ send_email <- function(subject, body = paste("Sent by", Sys.info()["nodename"]),
 #'
 #' Helpers for sending a file via email
 #'
-#' @param basename name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+#' @param name name of the file to use in the email. Defaults to the name of the table or the inputted filename.
 #' A timestamp and extension will be appended and passed on to [send_email] as the name of `attachments`.
 #' @inheritParams send_email
 #' @inheritDotParams send_email subject body emails smtp engine

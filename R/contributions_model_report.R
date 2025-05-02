@@ -13,7 +13,7 @@ contributions_model_report <- report(class=c("contributions_model_report"))
 read.contributions_model_report <- function(report, ...) {
 
   . <- prob.TRUE <- truth <- score <- event <- timestamp <- expr_dt <- memb_amt <-
-    group_customer_no <- tck_amt <- customer_no <- order_dt <- NULL
+    group_customer_no <- tck_amt <- customer_no <- order_dt <- explanation <- NULL
 
   report$predictions <- read_cache("predictions","contributions_model") %>%
     collect %>% setDT %>%
@@ -59,8 +59,8 @@ process.contributions_model_report <- function(report, ...) {
 }
 
 #' @export
-#' @inheritParams send_xlsx
 #' @describeIn contributions_model_report Send spreadsheet for contributions_model_report
+#' @inheritParams send_email
 output.contributions_model_report <- function(report, subject = paste("Contributions model", Sys.Date()),
                                               body = paste("Sent by", Sys.info()["nodename"]), emails = config::get("tessiflow.email"), ...) {
 

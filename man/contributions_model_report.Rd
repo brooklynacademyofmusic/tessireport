@@ -31,6 +31,10 @@ contributions_model_report
 \item{...}{not used}
 
 \item{subject}{character subject of the email}
+
+\item{body}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
+
+\item{emails}{email addresses (first will be sender)}
 }
 \description{
 emailed report of predictions from \link{contributions_model}
