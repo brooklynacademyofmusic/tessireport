@@ -54,6 +54,7 @@ Imports:
     stringr,
     tessilake,
     tessistream,
+    tidyselect,
     withr
 Suggests: 
     arrow,
