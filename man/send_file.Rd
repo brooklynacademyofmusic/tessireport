@@ -13,7 +13,7 @@ send_file(
   ...
 )
 
-send_xlsx(table, basename = format(substitute(table)), ...)
+send_xlsx(table, name = format(substitute(table)), ...)
 
 \method{output}{email_report}(report, report_filename = "filename", ...)
 }

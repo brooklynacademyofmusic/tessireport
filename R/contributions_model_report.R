@@ -64,7 +64,7 @@ process.contributions_model_report <- function(report, ...) {
 output.contributions_model_report <- function(report, subject = paste("Contributions model", Sys.Date()),
                                               body = paste("Sent by", Sys.info()["nodename"]), emails = config::get("tessiflow.email"), ...) {
 
-  send_xlsx(report$data, subject = subject, body = body, emails = emails, basename = "contributions_model",
+  send_xlsx(report$data, subject = subject, body = body, emails = emails, name = "contributions_model",
             currency = c("ticket_amt","census_median_income","iwave_capacity","iwave_donations","iwave_properties"))
   NextMethod()
 }

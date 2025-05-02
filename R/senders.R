@@ -82,12 +82,12 @@ send_file <- function(filename, name = basename(filename),
 #' @inheritDotParams send_email subject body emails
 #' @export
 send_xlsx <- function(table,
-                      basename = format(substitute(table)), ...) {
+                      name = format(substitute(table)), ...) {
   assert_data_table(table)
 
   filename <- write_xlsx(table, ...)
 
-  send_file(filename, basename = basename, ...)
+  send_file(filename, name = name, ...)
 }
 
 #' @param report `report` object
