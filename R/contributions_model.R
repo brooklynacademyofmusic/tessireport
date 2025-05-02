@@ -127,7 +127,7 @@ read.contributions_model <- function(model,
                                 backend = dataset)
 
   # label columns + rows
-  model$task$col_roles$feature <- grep("^(email|contribution|address|ticket).+(amt|count|level|max|min)|timestamp",
+  model$task$col_roles$feature <- grep("^(email|contribution|address|ticket).+(amt|count|level|max|min)|^timestamp$",
                                        names(dataset),value=T,ignore.case=T,perl=T)
 
   model$task$col_roles$order <- "timestamp"
