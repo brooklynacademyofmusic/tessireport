@@ -111,7 +111,7 @@ read.contributions_model <- function(model,
                    filter(dataset, date < predict_since & event == "FALSE") %>%
                      dplyr::slice_sample(prop = downsample_read) %>%
                      collect %>% setDT) %>%
-    .[,`:=`(event = as.factor(event, levels = c("FALSE","TRUE")),
+    .[,`:=`(event = factor(event, levels = c("FALSE","TRUE")),
             date = as.POSIXct(date))]
 
 
