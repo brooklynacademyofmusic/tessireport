@@ -71,9 +71,11 @@ iml_featureeffects <- function(model, data, features = NULL, method = "ale",
                                center.at = NULL, grid.size = 20) {
   future::plan("sequential")
 
-  # replace missing data
+  # replace missing data with OOB
   for (col in names(which(sapply(data, \(.) is.numeric(.) & !all(is.na(.))))))
-    setnafill(data, "const", min(data[,col,with=F],na.rm=T), cols = col)
+    setnafill(data, "const", min(data[,col,with=F],na.rm=T)-
+                sd(data[,col,with=F],na.rm=T)-
+                .Machine$double.eps, cols = col)
 
   predictor <- iml_predictor(model, data)
 
@@ -90,7 +92,7 @@ iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
   future::plan("multisession")
   predictor <- iml_predictor(model, data)
 
-  s <- Shapley$new(predictor, sample.size = sample.size)
+  s <- Shapley$new(predictor, x.interest = x.interest[1,], sample.size = sample.size)
   explanations <- x.interest[,predictor$data$feature.names,with=F] %>%
     split(seq_len(nrow(.))) %>%
     future_map(\(.) {s$explain(as.data.frame(.)); s$clone()})
