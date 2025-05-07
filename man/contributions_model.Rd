@@ -77,7 +77,7 @@ Shapley explanations}
 
 \item{features}{\code{character} The names of the features for which to compute the feature effects/importance.}
 
-\item{n_repetitions}{\code{numeric(1)} How many shufflings of the features should be done? See \link[iml:FeatureImp]{iml::FeatureImp} for more info.s}
+\item{n_repetitions}{\code{numeric(1)} How many shufflings of the features should be done? See \link[iml:FeatureImp]{iml::FeatureImp} for more info.}
 
 \item{n_top}{\code{integer(1)} the number of rows, ranked by probability to analyze and explain as 'top picks'.}
 

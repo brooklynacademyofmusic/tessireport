@@ -219,7 +219,7 @@ predict.contributions_model <- function(model, ...) {
 #' @importFrom stats runif
 #' @param n_top `integer(1)` the number of rows, ranked by probability to analyze and explain as 'top picks'.
 #' @param n_features `integer(1)` the number of features, ranked by importance to analyze.
-#' @param n_repetitions `numeric(1)` How many shufflings of the features should be done? See [iml::FeatureImp] for more info.s
+#' @param n_repetitions `numeric(1)` How many shufflings of the features should be done? See [iml::FeatureImp] for more info.
 #' @param downsample_output `numeric(1)` the proportion of the test set to use for feature importance and
 #' Shapley explanations
 #' @inheritParams iml_featureimp
@@ -231,26 +231,27 @@ output.contributions_model <- function(model, downsample_output = 1,
 
   model <- NextMethod()
 
-  model$dataset <- mutate(model$dataset, date = as.Date(date))
-  model$predictions <- mutate(model$predictions, date = as.Date(date))
+  model$dataset <- mutate(model$dataset, date = as.Date(date)) %>% collect %>% setDT
+  model$predictions <- mutate(model$predictions, date = as.Date(date)) %>% collect %>% setDT
 
-  dataset_predictions <- inner_join(model$dataset,
+  dataset_predictions <- merge(model$dataset,
                                     model$predictions,
-                                    by = c("group_customer_no","date","rowid")) %>% collect %>% setDT
+                                    by = c("group_customer_no","date","rowid"))
   setorder(dataset_predictions,-prob.TRUE)
   # add small random data
   numeric_cols <- which(sapply(dataset_predictions,is.numeric))
-  dataset_predictions[,(numeric_cols) := lapply(.SD,\(.) . + runif(.N,1e-9,1e9)), .SDcols = numeric_cols]
+  dataset_predictions[,(numeric_cols) := lapply(.SD,\(.) . + runif(.N,-.Machine$double.eps,.Machine$double.eps)),
+                      .SDcols = numeric_cols]
 
   # downsample and fill with small random data
   downsampled <- dataset_predictions[runif(.N)<downsample_output]
   missing_cols <- which(sapply(downsampled,\(.) all(is.na(.))))
-  downsampled <- downsampled[,(missing_cols) := runif(.N,1e-9,1e9)]
+  downsampled <- downsampled[,(missing_cols) := runif(.N,-.Machine$double.eps,.Machine$double.eps)]
 
   # select top rows and fill with small random data
   top_picks <- dataset_predictions[seq(n_top)]
   missing_cols <- which(sapply(top_picks,\(.) all(is.na(.))))
-  top_picks <- top_picks[,(missing_cols) := runif(.N,1e-9,1e9)]
+  top_picks <- top_picks[,(missing_cols) := runif(.N,-.Machine$double.eps,.Machine$double.eps)]
 
   # Feature importance
   fi <- iml_featureimp(model$model, downsampled, features = features, n.repetitions = n_repetitions)
@@ -277,7 +278,7 @@ output.contributions_model <- function(model, downsample_output = 1,
   write_pdf({
     pdf_plot(pfi, "Global feature importance","First contributions model")
     pdf_plot(pfe1, "Local feature effects","First contributions model, full dataset")
-    pdf_plot(pfe2, "Local feature effects","First contributions model, likelihood > .75")
+    pdf_plot(pfe2, "Local feature effects","First contributions model, top picks")
   }, .title = "Contributions model", output_file = pdf_filename)
 
   # Shapley explanations
