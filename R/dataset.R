@@ -11,11 +11,12 @@
 #' be an arrow_dplyr_query
 #' @param partition `character`|`integer` identifying the partition the chunk will be saved in
 #' @param dataset_name `character` cache directory where the partition will be saved in
-#' @param rows [data.table] identifying rows of the dataset to load; will be appended to dataset
+#' @param rows [data.table][data.table::data.table-package] identifying rows of the dataset to load; will be appended to dataset
 #' @param cols `character` columns of the dataset to add to partition
 #' @inheritDotParams dataset_rollback_event by event rollback_cols
 #' @inheritDotParams dataset_normalize_timestamps timestamp_cols
 #' @importFrom checkmate assert_names assert_false test_class assert_vector assert_character assert_data_table
+#' @importFrom tidyselect all_of
 #' @return NULL
 dataset_chunk_write <- function(dataset, partition,
                                 dataset_name,

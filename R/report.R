@@ -15,6 +15,20 @@ report = function(x = list(),class=character()) {
   structure(x, class=c(class,"report",class(x)))
 }
 
+#' @describeIn report composable argument for report classes
+#'
+#' @param report_x report
+#' @param report_y report
+#' @return report that contains data from `report_x` and `report_y` and inherits from both `report_x` and `report_y`
+#'
+#' @export
+`%+%` = function(report_x,report_y) {
+  class_x <- setdiff(class(report_x),c("report","list"))
+  class_y <- setdiff(class(report_y),c("report","list"))
+
+  structure(as.list(modifyList(report_x,report_y)),class = unique(c(class_x,class_y,"report","list")))
+}
+
 default_function <- function(fun_name) {
   function(x, ...) {
     if(!"NextMethod" %in% sapply(rlang::trace_back()$call,rlang::call_name))
@@ -70,7 +84,7 @@ write.report = default_function("write")
 #' @describeIn report generic function to dispatch for report running
 run = function(...) UseMethod("run")
 #' @export
-#' @describeIn report run all methods in order: read -> process -> output -> write
+#' @describeIn report run all methods in order: read -> process -> write -> output
 #' @importFrom rlang try_fetch abort cnd_signal is_call call_name
 run.report = function(x,...) {
   try_fetch(x %>%

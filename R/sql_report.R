@@ -4,7 +4,8 @@
 #'
 #' @param sql_report sql_report object
 #' @inheritDotParams tessilake::read_sql freshness primary_keys
-#' @inheritDotParams send_xlsx subject body emails basename
+#' @inheritDotParams send_email subject body emails
+#' @inheritDotParams send_file name
 #' @inheritDotParams write_xlsx group currency
 #' @name sql_report
 #' @examples
@@ -57,4 +58,7 @@ output.sql_report <- function(sql_report, query, ...) {
 
   NextMethod()
 }
+
+#' @export
+process.sql_report <- write.sql_report <- \(...) NextMethod()
 

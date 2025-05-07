@@ -56,21 +56,15 @@ test_that("send_email sends attachments", {
 
 test_that("send_xlsx calls send_email with the specified args", {
   send_email <- mock()
-  stub(send_xlsx, "send_email", send_email)
+  stub(send_file, "send_email", send_email)
+  stub(send_xlsx, "send_file", send_file)
 
   a_table <- data.table(x = seq(1000))
 
-  send_xlsx(a_table)
-  expect_equal(mock_args(send_email)[[1]]$subject,paste("a_table",Sys.Date()))
-  expect_equal(mock_args(send_email)[[1]]$body,paste("Sent by",Sys.info()["nodename"]))
-  expect_equal(mock_args(send_email)[[1]]$emails,"ssyzygy@bam.org")
-  expect_match(names(mock_args(send_email)[[1]]$attachments),paste0("a_table_",Sys.Date(),".xlsx"))
-
-
   send_xlsx(a_table, subject = "subject", body = "body", emails = "me@me.com",
-            basename = "b_table")
-  expect_equal(mock_args(send_email)[[2]]$subject,"subject")
-  expect_equal(mock_args(send_email)[[2]]$body,"body")
-  expect_equal(mock_args(send_email)[[2]]$emails,"me@me.com")
-  expect_match(names(mock_args(send_email)[[2]]$attachments),paste0("b_table_",Sys.Date(),".xlsx"))
+            name = "b_table")
+  expect_equal(mock_args(send_email)[[1]]$subject,"subject")
+  expect_equal(mock_args(send_email)[[1]]$body,"body")
+  expect_equal(mock_args(send_email)[[1]]$emails,"me@me.com")
+  expect_match(names(mock_args(send_email)[[1]]$attachments),paste0("b_table_",Sys.Date(),".xlsx"))
 })

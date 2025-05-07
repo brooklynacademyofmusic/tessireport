@@ -13,6 +13,6 @@ crossovers_prod(prod_season_no, min_customers = 10)
 a potential crossover}
 }
 \description{
-Simple analysis of crossover audiences for particular production(s), returns a \link{data.table} of productions,
+Simple analysis of crossover audiences for particular production(s), returns a \link[data.table:data.table]{data.table} of productions,
 ranked from highest to lowest \% crossover.
 }

@@ -1,6 +1,6 @@
 Package: tessireport
 Title: Data hygiene tools for Tessitura
-Version: 0.1.0
+Version: 0.3.0
 Authors@R: 
     person(given = "Sky",
            family = "Syzygy",
@@ -29,14 +29,12 @@ Imports:
     DBI,
     dplyr,
     duckdb,
-    emo,
-    ff,
-    ffbase,
     furrr,
     future,
     ggplot2,
     httr,
     iml,
+    kableExtra,
     keyring,
     knitr,
     lubridate,
@@ -45,7 +43,6 @@ Imports:
     mlr3db,
     mlr3verse,
     openxlsx,
-    patchwork,
     purrr,
     ranger,
     rlang,
@@ -55,6 +52,7 @@ Imports:
     stringr,
     tessilake,
     tessistream,
+    tidyselect,
     withr
 Suggests: 
     arrow,
@@ -67,6 +65,29 @@ Config/testthat/edition: 3
 Remotes: 
     brooklynacademyofmusic/tessilake,
     brooklynacademyofmusic/tessistream,
+    brooklynacademyofmusic/sendmailR,
     skysyzygy/ffbase/pkg,
     mlr-org/mlr3proba,
     hadley/emo
+Collate: 
+    'report.R'
+    'attendance_report.R'
+    'contributions_model.R'
+    'contributions_model_report.R'
+    'crossovers.R'
+    'dataset.R'
+    'duplicates_report.R'
+    'iml.R'
+    'mlr3proba_shim.R'
+    'mlr_report.R'
+    'p2_orphans_report.R'
+    'p2_segments_and_tags.R'
+    'pdf.R'
+    'senders.R'
+    'sql_report.R'
+    'tessireport-package.R'
+    'test-helpers.R'
+    'unsubscribe_report.R'
+    'utils-data-table.R'
+    'utils-pipe.R'
+    'xlsx.R'

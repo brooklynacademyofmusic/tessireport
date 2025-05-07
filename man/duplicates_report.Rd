@@ -14,7 +14,7 @@
 \item{duplicates_report}{duplicates_report object}
 
 \item{...}{
-  Arguments passed on to \code{\link[=send_xlsx]{send_xlsx}}
+  Arguments passed on to \code{\link[=send_email]{send_email}}
   \describe{
     \item{\code{body}}{html of message or a list containing \link[sendmailR:mime_part]{sendmailR::mime_part} objects.}
   }}

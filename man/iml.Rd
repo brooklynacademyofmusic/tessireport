@@ -33,7 +33,7 @@ iml_shapley(model, data, x.interest = NULL, sample.size = 100)
 \arguments{
 \item{model}{\link[mlr3:Learner]{mlr3::Learner} model, pre-trained}
 
-\item{data}{\link{data.table} of a test dataset}
+\item{data}{\link[data.table:data.table]{data.table} of a test dataset}
 
 \item{predict.function}{\code{function} function to predict newdata. The first argument is the model, the second the newdata.}
 
@@ -72,7 +72,7 @@ iml_shapley(model, data, x.interest = NULL, sample.size = 100)
 }
 }
 \description{
-Simple wrappers around \link{iml-package} classes to provide a more streamlined approach for generating
+Simple wrappers around \link[iml:iml-package]{iml} classes to provide a more streamlined approach for generating
 interpretable plots and explanatory data.
 }
 \section{Functions}{
