@@ -11,6 +11,28 @@
 #' @importFrom iml FeatureImp FeatureEffects Shapley
 NULL
 
+#' @describeIn iml regularize data for iml by replacing NA's and adding small
+#' random noise to constant columns
+iml_regularize <- function(data, features = names(sapply(data,is.numeric))) {
+  assert_data_table(data)
+
+  for (feat in features) {
+    NAs <- is.na(data[[feat]])
+    if(!all(NAs))
+      data[NAs, (feat) := data[!NAs][sample.int(.N,sum(NAs),replace=T)][[feat]] ]
+    else
+      data[,(feat) := 0]
+
+    # add noise to constant columns
+    if(all(data[[feat]] == data[[feat]][1])) {
+      data[, (feat) := as.numeric(get(feat))]
+      data[1,(feat) := get(feat)*(1+.Machine$double.eps)+.Machine$double.eps]
+    }
+  }
+
+  data
+}
+
 #' @importFrom iml Predictor
 #' @importFrom purrr reduce
 #'
@@ -39,6 +61,8 @@ iml_predictor <- function(model, data, predict.function = NULL, y = NULL) {
   features <- reduce(model$model,\(f,m) c(f,m$intasklayout$id)) %>% unlist %>% unique %>%
   # plus the output variable, filtering out non-existent columns
     c(y) %>% intersect(colnames(data))
+
+  iml_regularize(data,features)
 
   Predictor$new(model, data[,features,with=F],
                 predict.function = predict.function,
@@ -71,14 +95,7 @@ iml_featureeffects <- function(model, data, features = NULL, method = "ale",
                                center.at = NULL, grid.size = 20) {
   future::plan("sequential")
 
-  # replace missing data with OOB
-  for (col in names(which(sapply(data, \(.) is.numeric(.) & !all(is.na(.))))))
-    setnafill(data, "const", min(data[,col,with=F],na.rm=T)-
-                sd(data[,col,with=F],na.rm=T)-
-                .Machine$double.eps, cols = col)
-
   predictor <- iml_predictor(model, data)
-
   fe <- FeatureEffects$new(predictor, features = features, method = method,
                            center.at = center.at, grid.size = grid.size)
 }
@@ -92,10 +109,11 @@ iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
   future::plan("multisession")
   predictor <- iml_predictor(model, data)
 
+  x.interest <- x.interest[,predictor$data$feature.names,with=F]
   s <- Shapley$new(predictor, x.interest = x.interest[1,], sample.size = sample.size)
-  explanations <- x.interest[,predictor$data$feature.names,with=F] %>%
-    split(seq_len(nrow(.))) %>%
-    future_map(\(.) {s$explain(as.data.frame(.)); s$clone()})
+  explanations <- split(x.interest, seq_len(nrow(x.interest))) %>%
+    future_map(\(.) {s$explain(as.data.frame(.)); s$clone()},
+               .options = furrr_options(seed = T))
 }
 
 #' parse_shapley

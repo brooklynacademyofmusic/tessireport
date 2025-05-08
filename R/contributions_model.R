@@ -239,20 +239,12 @@ output.contributions_model <- function(model, downsample_output = 1,
                                     model$predictions,
                                     by = c("group_customer_no","date","rowid"))
   setorder(dataset_predictions,-prob.TRUE)
-  # add small random data
-  numeric_cols <- which(sapply(dataset_predictions,is.numeric))
-  dataset_predictions[,(numeric_cols) := lapply(.SD,\(.) . + runif(.N,-.Machine$double.eps,.Machine$double.eps)),
-                      .SDcols = numeric_cols]
 
-  # downsample and fill with small random data
+  # downsample
   downsampled <- dataset_predictions[runif(.N)<downsample_output]
-  missing_cols <- which(sapply(downsampled,\(.) all(is.na(.))))
-  downsampled <- downsampled[,(missing_cols) := runif(.N,-.Machine$double.eps,.Machine$double.eps)]
 
   # select top rows and fill with small random data
   top_picks <- dataset_predictions[seq(n_top)]
-  missing_cols <- which(sapply(top_picks,\(.) all(is.na(.))))
-  top_picks <- top_picks[,(missing_cols) := runif(.N,-.Machine$double.eps,.Machine$double.eps)]
 
   # Feature importance
   fi <- iml_featureimp(model$model, downsampled, features = features, n.repetitions = n_repetitions)

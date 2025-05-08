@@ -2,12 +2,15 @@
 % Please edit documentation in R/iml.R
 \name{iml}
 \alias{iml}
+\alias{iml_regularize}
 \alias{iml_predictor}
 \alias{iml_featureimp}
 \alias{iml_featureeffects}
 \alias{iml_shapley}
 \title{Interpretable machine learning for mlr_report}
 \usage{
+iml_regularize(data, features = names(sapply(data, is.numeric)))
+
 iml_predictor(model, data, predict.function = NULL, y = NULL)
 
 iml_featureimp(
@@ -31,9 +34,11 @@ iml_featureeffects(
 iml_shapley(model, data, x.interest = NULL, sample.size = 100)
 }
 \arguments{
-\item{model}{\link[mlr3:Learner]{mlr3::Learner} model, pre-trained}
-
 \item{data}{\link[data.table:data.table]{data.table} of a test dataset}
+
+\item{features}{\code{character} The names of the features for which to compute the feature effects/importance.}
+
+\item{model}{\link[mlr3:Learner]{mlr3::Learner} model, pre-trained}
 
 \item{predict.function}{\code{function} function to predict newdata. The first argument is the model, the second the newdata.}
 
@@ -44,8 +49,6 @@ iml_shapley(model, data, x.interest = NULL, sample.size = 100)
 \item{compare}{\code{character(1)} Either "ratio" or "difference".}
 
 \item{n.repetitions}{\code{numeric(1)} How many shufflings of the features should be done?}
-
-\item{features}{\code{character} The names of the features for which to compute the feature effects/importance.}
 
 \item{method}{\code{character(1)}
 \itemize{
@@ -77,6 +80,9 @@ interpretable plots and explanatory data.
 }
 \section{Functions}{
 \itemize{
+\item \code{iml_regularize()}: regularize data for iml by replacing NA's and adding small
+random noise to constant columns
+
 \item \code{iml_predictor()}: wrapper for \link[iml:Predictor]{iml::Predictor} to subset the features of data and
 provide a \code{predict.function} and \code{y} when the predictor can't identify
 them.
