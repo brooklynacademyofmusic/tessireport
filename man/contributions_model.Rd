@@ -34,7 +34,7 @@ contributions_dataset(
   ...
 )
 
-\method{train}{contributions_model}(model, num_trees = 512, downsample_train = 1, ...)
+\method{train}{contributions_model}(model, num_trees = 512, downsample_train = 0.1, ...)
 
 \method{predict}{contributions_model}(model, ...)
 

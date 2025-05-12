@@ -154,11 +154,10 @@ read.contributions_model <- function(model,
 #' * tuned using a hyperband method on the AUC (sensitivity/specificity)
 #' @param num_trees `integer(1)` maximum number of trees to use for ranger model
 #' @param downsample_train `double(1)` fraction of observations to use for training, defaults to .1
-train.contributions_model <- function(model, num_trees = 512, downsample_train = 1, ...) {
-  subsample <- po("subsample", frac = downsample_train)
+train.contributions_model <- function(model, num_trees = 512, downsample_train = .1, ...) {
 
   preprocess <- po("select",selector = selector_invert(selector_grep("__1|Send", perl = T))) %>>%
-                po("classbalancing", reference = "minor",ratio = 10,adjust="downsample") %>>%
+                po("classbalancing", reference = "minor",ratio = 1/downsample_train,adjust="downsample") %>>%
                 ppl("robustify") %>>%
                 po("filter", filter = flt("find_correlation"), filter.cutoff = .5) %>>%
                 po("yeojohnson", lower = to_tune(-2,0), upper = to_tune(0,2), eps = .1)
