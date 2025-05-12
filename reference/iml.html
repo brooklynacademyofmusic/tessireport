@@ -52,7 +52,13 @@ interpretable plots and explanatory data.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iml_regularize</span><span class="op">(</span><span class="va">data</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">is.numeric</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">iml_predictor</span><span class="op">(</span><span class="va">model</span>, <span class="va">data</span>, predict.function <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">iml_predictor</span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  predict.function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  regularize <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">iml_featureimp</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
@@ -97,6 +103,10 @@ interpretable plots and explanatory data.</p>
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p><code>character(1)</code>|<a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a>|<a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a> The target vector or (preferably) the name of the target column in the data argument. Predictor tries to infer the target automatically from the model.</p></dd>
+
+
+<dt id="arg-regularize">regularize<a class="anchor" aria-label="anchor" href="#arg-regularize"></a></dt>
+<dd><p><code>logical(1)</code> whether or not to pass the data through iml_regularize</p></dd>
 
 
 <dt id="arg-loss">loss<a class="anchor" aria-label="anchor" href="#arg-loss"></a></dt>
