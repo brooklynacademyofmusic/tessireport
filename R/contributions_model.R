@@ -51,13 +51,6 @@ contributions_dataset <- function(since = Sys.Date()-365*5, until = Sys.Date(),
   # filter dates
   stream_key <- stream_key[timestamp >= dataset_max_date %||% since & timestamp < until]
 
-  # subsample
-  stream_key[, `:=`(date = as.Date(timestamp),
-                    month = lubridate::floor_date(timestamp, "months"))]
-  setorder(stream_key, group_customer_no, month, event, timestamp)
-  stream_key <- stream_key[, last(.SD), by = c("group_customer_no", "month")]
-  stream_key$month <- NULL
-
   # partition by fixed number of rows
   stream_key[,partition := ceiling(rowid/chunk_size)]
 
