@@ -274,5 +274,7 @@ output.contributions_model <- function(model, downsample_output = 1,
   top_picks[,explanation := map(ex,"results")]
   saveRDS(top_picks, cache_primary_path("shapley.Rds", "contributions_model"))
 
+  NextMethod()
+
 }
 
