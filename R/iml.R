@@ -44,8 +44,9 @@ iml_regularize <- function(data, features = names(sapply(data,is.numeric))) {
 #' @param data [data.table][data.table::data.table-package] of a test dataset
 #' @param predict.function `function` function to predict newdata. The first argument is the model, the second the newdata.
 #' @param y `character(1)`|[numeric]|[factor] The target vector or (preferably) the name of the target column in the data argument. Predictor tries to infer the target automatically from the model.
+#' @param regularize `logical(1)` whether or not to pass the data through [iml_regularize]
 #'
-iml_predictor <- function(model, data, predict.function = NULL, y = NULL) {
+iml_predictor <- function(model, data, predict.function = NULL, y = NULL, regularize = TRUE) {
 
   # patch for prob models
   if (model$predict_type == "prob") {
@@ -62,7 +63,8 @@ iml_predictor <- function(model, data, predict.function = NULL, y = NULL) {
   # plus the output variable, filtering out non-existent columns
     c(y) %>% intersect(colnames(data))
 
-  iml_regularize(data,features)
+  if(regularize)
+    iml_regularize(data,features)
 
   Predictor$new(model, data[,features,with=F],
                 predict.function = predict.function,
@@ -107,7 +109,7 @@ iml_featureeffects <- function(model, data, features = NULL, method = "ale",
 iml_shapley <- function(model, data, x.interest = NULL, sample.size = 100) {
   . <- NULL
   future::plan("multisession")
-  predictor <- iml_predictor(model, data)
+  predictor <- iml_predictor(model, data, regularize = F)
 
   x.interest <- x.interest[,predictor$data$feature.names,with=F]
   s <- Shapley$new(predictor, x.interest = x.interest[1,], sample.size = sample.size)
