@@ -11,7 +11,13 @@
 \usage{
 iml_regularize(data, features = names(sapply(data, is.numeric)))
 
-iml_predictor(model, data, predict.function = NULL, y = NULL)
+iml_predictor(
+  model,
+  data,
+  predict.function = NULL,
+  y = NULL,
+  regularize = TRUE
+)
 
 iml_featureimp(
   model,
@@ -43,6 +49,8 @@ iml_shapley(model, data, x.interest = NULL, sample.size = 100)
 \item{predict.function}{\code{function} function to predict newdata. The first argument is the model, the second the newdata.}
 
 \item{y}{\code{character(1)}|\link{numeric}|\link{factor} The target vector or (preferably) the name of the target column in the data argument. Predictor tries to infer the target automatically from the model.}
+
+\item{regularize}{\code{logical(1)} whether or not to pass the data through \link{iml_regularize}}
 
 \item{loss}{\code{character(1)}|\link{function}. The loss function. Either the name of a loss (e.g. "ce" for classification or "mse") or a function.}
 
