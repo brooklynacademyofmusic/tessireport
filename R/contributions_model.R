@@ -156,7 +156,7 @@ read.contributions_model <- function(model,
 #' @param downsample_train `double(1)` fraction of observations to use for training, defaults to .1
 train.contributions_model <- function(model, num_trees = 512, downsample_train = .1, ...) {
 
-  preprocess <- po("select",selector = selector_invert(selector_grep("__1|Send", perl = T))) %>>%
+  preprocess <- po("select",selector = selector_invert(selector_grep("__1|Send", perl = T, ignore.case = T))) %>>%
                 po("classbalancing", reference = "minor",ratio = 1/downsample_train,adjust="downsample") %>>%
                 ppl("robustify") %>>%
                 po("filter", filter = flt("find_correlation"), filter.cutoff = .5) %>>%
