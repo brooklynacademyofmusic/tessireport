@@ -86,8 +86,7 @@ process.unsubscribe_report <- function(unsubscribe_report, ...) {
   # Email issues
   primary_emails <- unsubscribe_report$emails[primary_ind == "Y"]
   latest_email_events <- setkey(unsubscribe_report$email_events,customer_no,timestamp) %>%
-                               .[!event_subtype %in% c("Open","Click","Send"), .SD[.N],
-                                 by = list(customer_no, ifelse(event_subtype == "Unsubscribe", listid, NA)),
+                               .[, .SD[.N], by = list(customer_no, ifelse(event_subtype == "Unsubscribe", listid, NA)),
                                  .SDcols = colnames(unsubscribe_report$email_events)]
   bad_emails <- rbind(latest_email_events[grepl("Unsub", event_subtype),
                                .(customer_no, message = paste(event_subtype,"from",list_name), timestamp)],
