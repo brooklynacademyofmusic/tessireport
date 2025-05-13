@@ -191,6 +191,7 @@ output.unsubscribe_report <- function(unsubscribe_report, since = Sys.Date() - 3
 #' @importFrom checkmate assert_data_table assert_character
 send_unsubscribe_report_table <- function(table, email) {
   send_xlsx(table = table,
+            name = "contact_warning",
             subject = paste("Contact warning report for",Sys.Date()),
             emails = c(config::get("tessiflow.email"), email),
             body = "<p>Hi,
