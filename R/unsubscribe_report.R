@@ -156,10 +156,14 @@ process.unsubscribe_report <- function(unsubscribe_report, ...) {
 #' * Other -> send to Dev Ops (kburke and esearles)
 #' @importFrom tessilake read_sql
 #' @importFrom dplyr case_when
+#' @inheritParams send_xlsx
 #' @export
 output.unsubscribe_report <- function(unsubscribe_report, since = Sys.Date() - 30, until = Sys.Date() + 30,
-                                      routing_rules = list(TRUE ~ list(config::get("tessiflow.email"))), ...) {
-  . <- customer_no <- timestamp <- expr_dt <- name <- message <- email <-
+                                      routing_rules = list(TRUE ~ list(config::get("tessiflow.email"))),
+                                      name = "contact_warning",
+                                      subject = paste("Contact warning report for",Sys.Date()),
+                                      ...) {
+  . <- customer_no <- timestamp <- expr_dt <- message <- email <-
     memb_level <- MGOs <- constituencies <- fname <- lname <- userid <- NULL
 
   assert_class(unsubscribe_report, "unsubscribe_report")
@@ -173,31 +177,15 @@ output.unsubscribe_report <- function(unsubscribe_report, since = Sys.Date() - 3
   routing_rules <- substitute(routing_rules) # needed to strip environment information from the formula
   constituency_routing <- filtered_report[,.(routing_email = unlist(case_when(!!!eval(routing_rules)))), by = I]
 
-  filtered_report <- filtered_report[constituency_routing, on = "I"]
+  filtered_report <- filtered_report[constituency_routing, on = "I"][,I:=NULL]
 
   split(filtered_report, by = "routing_email", keep.by = FALSE) %>%
-    purrr::iwalk(send_unsubscribe_report_table)
+    purrr::iwalk(\(table,email) send_xlsx(table,
+                                          name = name,
+                                          subject = subject,
+                                          emails = c(config::get("tessiflow.email"),email),
+                                          ...))
 
   unsubscribe_report
 
-}
-
-#' send_unsubscribe_report_table
-#'
-#' Simple wrapper for [send_xlsx]
-#'
-#' @param table data.table to send
-#' @param email character email address to send the email to
-#' @importFrom checkmate assert_data_table assert_character
-send_unsubscribe_report_table <- function(table, email) {
-  send_xlsx(table = table,
-            name = "contact_warning",
-            subject = paste("Contact warning report for",Sys.Date()),
-            emails = c(config::get("tessiflow.email"), email),
-            body = "<p>Hi,
-                    <p>This is a report of contact issues for constituents your portfolio.
-                    <p>Please contact Sky or Kathleen if you have any questions.
-                    <p>Sincerely,
-                    <p>Sky's computer",
-            file.names = paste0("contact_report_",Sys.Date(),".xlsx"))
 }

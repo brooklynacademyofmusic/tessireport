@@ -16,6 +16,8 @@
   since = Sys.Date() - 30,
   until = Sys.Date() + 30,
   routing_rules = list(TRUE ~ list(config::get("tessiflow.email"))),
+  name = "contact_warning",
+  subject = paste("Contact warning report for", Sys.Date()),
   ...
 )
 }
@@ -31,6 +33,11 @@
 \item{until}{date, end date for filtering the returned data}
 
 \item{routing_rules}{list of formulas to be used for routing, as for \link[dplyr:case_when]{dplyr::case_when}. Can refer to any columns returned by \link{process.unsubscribe_report}. See \strong{Note} below}
+
+\item{name}{name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to \link{send_email} as the name of \code{attachments}.}
+
+\item{subject}{character subject of the email}
 }
 \description{
 Reports on unsubscribes and bad addresses for a group of customers
