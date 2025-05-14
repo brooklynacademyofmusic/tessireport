@@ -59,6 +59,8 @@
 <span>  since <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">30</span>,</span>
 <span>  until <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">30</span>,</span>
 <span>  routing_rules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">TRUE</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">config</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/config/reference/get.html" class="external-link">get</a></span><span class="op">(</span><span class="st">"tessiflow.email"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"contact_warning"</span>,</span>
+<span>  subject <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Contact warning report for"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -89,6 +91,15 @@
 
 <dt id="arg-routing-rules">routing_rules<a class="anchor" aria-label="anchor" href="#arg-routing-rules"></a></dt>
 <dd><p>list of formulas to be used for routing, as for <a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">dplyr::case_when</a>. Can refer to any columns returned by process.unsubscribe_report. See <strong>Note</strong> below</p></dd>
+
+
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
+<dd><p>name of the file to use in the email. Defaults to the name of the table or the inputted filename.
+A timestamp and extension will be appended and passed on to <a href="send_email.html">send_email</a> as the name of <code>attachments</code>.</p></dd>
+
+
+<dt id="arg-subject">subject<a class="anchor" aria-label="anchor" href="#arg-subject"></a></dt>
+<dd><p>character subject of the email</p></dd>
 
 </dl></div>
     <div class="section level2">
