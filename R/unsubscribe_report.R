@@ -105,7 +105,7 @@ process.unsubscribe_report <- function(unsubscribe_report, ...) {
 
   # Login issues
   bad_logins <- primary_emails[unsubscribe_report$logins[primary_ind == "Y"], on = "customer_no"][trimws(tolower(login)) != trimws(tolower(address)),
-                 .(customer_no, message = "Email does not match login", timestamp = pmax(last_update_dt, i.last_update_dt))]
+                 .(customer_no, message = paste("Email does not match login:", login), timestamp = pmax(last_update_dt, i.last_update_dt))]
 
   # Inactive customers
   inactive <- unsubscribe_report$customers[inactive_desc != "Active",
@@ -129,10 +129,6 @@ process.unsubscribe_report <- function(unsubscribe_report, ...) {
   unsubscribe_report
 
 }
-
-
-
-
 
 #' @describeIn unsubscribe_report send the unsubscribe_report as emails to MGOs
 #'
