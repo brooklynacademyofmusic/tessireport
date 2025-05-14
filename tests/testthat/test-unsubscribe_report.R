@@ -106,11 +106,12 @@ test_that("process.unsubscribe_report has one row per issue", {
 
   report$email_events[,`:=`(event_subtype = rep(c("Open","Click","Send"), length.out = .N),
                             listid = NA)]
-  setorder(report$email_events, customer_no, timestamp)
-  report$email_events[,`:=`(I=1:.N,N=.N), by = "customer_no"]
+  report$email_events[,email := sample(unique(report$emails$address),.N,replace=T)]
+  setorder(report$email_events, email, timestamp)
+  report$email_events[,`:=`(I=1:.N,N=.N), by = "email"]
   report$email_events[I==N, `:=`(event_subtype = c("Hard Bounce","Soft Bounce","Unsubscribe"),
-                                 listid = c(NA,NA,1))]
-  report$email_events[I==N-1,`:=`(event_subtype = c("Hard Bounce","Soft Bounce","Unsubscribe"),
+                                 listid = c(NA,NA,3))]
+  report$email_events[I==N-1,`:=`(event_subtype = c("Send","Send","Unsubscribe"),
                                   listid = c(NA,NA,2))]
   report$emails <- report$emails[customer_no != 8992918]
   report$addresses[,last_updated_by:=c("me","you","NCOA$DNM")]
