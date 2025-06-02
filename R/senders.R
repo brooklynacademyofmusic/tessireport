@@ -99,6 +99,9 @@ send_xlsx <- function(table,
 #' @export
 output.email_report <- function(report, report_filename = "filename", ...) {
   assert_character(report_filename, len = 1)
+  
+  if(is.null(report[[report_filename]]))
+     return(NULL)
   assert_character(report[[report_filename]], len = 1)
   assert_file_exists(report[[report_filename]])
 
