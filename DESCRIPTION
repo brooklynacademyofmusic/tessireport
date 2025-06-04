@@ -83,6 +83,7 @@ Collate:
     'p2_orphans_report.R'
     'p2_segments_and_tags.R'
     'pdf.R'
+    'performance_map_report.R'
     'senders.R'
     'sql_report.R'
     'tessireport-package.R'
