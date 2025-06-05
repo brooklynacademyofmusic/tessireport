@@ -1,125 +1,132 @@
 #' @name performance_map_report
 #' @title performance_map_report
 #' @description Hierarchical clustering of performances, using audience crossover
-#' data to calculate the effective "distance" between performances
+#' data to calculate the effective "distance" between performances.
+#' * Distance is calculated using Simpson's distance metric
+#' * Distance is corrected by time using a binomial regression on time between
+#' performances
+#' * Clustering is hierarchical using Ward D2 distance
+#' * Mapping is classic multidimensional scaling, i.e. PCA
+#' @export
 performance_map_report <- report(list(),c("performance_map","email_report"))
 
+#' @param report `report` object
+#' @param since `POSIXct` performance data on/after this date will be returned
+#' @param until `POSIXct` performance data on/before this date will be returned
+#' @param filter_expr `expression` to use when filtering performances, i.e.
+#' `read_tessi("performances") %>% filter(!!filter_expr)`
+#' @param ... not used
 #' @export
+#' @importFrom tessilake read_tessi
+#' @importFrom dplyr filter collect
+#' @importFrom tidyselect all_of
 #' @describeIn performance_map_report read data for performance map
-read.performance_map_report <- function(report) {
-  ticketStream <- read_cache("ticket_stream", "stream") %>%
-    filter(event_subtype == "Live Performance") %>% collect %>% setDT
+read.performance_map <- function(report,since = Sys.Date()-365*5,
+                                        until = Sys.Date()+365,
+                                        filter_expr = NULL, ...) {
 
-  tickets = ticketStream
+  report$performances = read_tessi("performances") %>%
+    filter(perf_dt >= since & perf_dt <= until) %>%
+    filter(!!filter_expr) %>%
+    collect %>% setDT
 
-  o = read_tessi("order_detail",
-                 select = c("perf_desc","perf_dt","perf_no","seat_no",
-                            "prod_season_no")) %>% collect %>% setDT
+  report$tickets = read_tessi("order_detail", select = c(
+    "perf_desc","perf_dt","perf_no","seat_no","prod_season_no","customer_no")) %>%
+    filter(perf_dt >= since & perf_dt <= until) %>%
+    filter(perf_no %in% report$performances$perf_no) %>%
+    collect %>% setDT
 
-  s = read_tessi("performances") %>% collect %>% setDT
+  NextMethod()
 
-  # tickets = tickets[group_customer_no>=200,.(T),by=c("group_customer_no","prod_season_no")]
-  prodData = o[,.(perf_desc=first(perf_desc),perf_dt=mean(perf_dt,na.rm=TRUE),inventory=n_distinct(perf_no,seat_no)),by="prod_season_no"]
-  seasonData = s[,.(prod_season_no,season_desc)] %>% distinct %>% .[,`:=`(season_desc=stringr::str_remove(season_desc,"\\s*\\d{2}FY\\s*"),
-                                                                          season_fyear=stringr::str_extract(season_desc,"\\d{2}FY"))]
 }
 
+
+# prodData = o[,.(perf_desc=first(perf_desc),perf_dt=mean(perf_dt,na.rm=TRUE),inventory=n_distinct(perf_no,seat_no)),by="prod_season_no"]
+# seasonData = s[,.(prod_season_no,season_desc)] %>% distinct %>% .[,`:=`(season_desc=stringr::str_remove(season_desc,"\\s*\\d{2}FY\\s*"),
+#                                                                         season_fyear=stringr::str_extract(season_desc,"\\d{2}FY"))]
+
+
+#' @param n_clusters `integer` number of clusters to make
+#'
 #' @export
 #' @describeIn performance_map_report analyze and cluster performances
-process.performance_map_report <- function(report) {
+#' @importFrom data.table dcast
+#' @importFrom parallelDist parDist
+#' @importFrom reshape2 melt
+#' @importFrom boot logit inv.logit
+#' @importFrom stats cmdscale
+process.performance_map <- function(report, n_clusters = 8, ...) {
 
+  # Limit this to real tickets and summarize
+  training_tickets = report$tickets[group_customer_no>=200,.(T),
+                                    by=c("group_customer_no",
+                                         "prod_season_no")]
 
-  # Limit this to tickets that we care about
-  trainingTickets = tickets[group_customer_no>=200 & timestamp>today()-dyears(5),.(T),by=c("group_customer_no","prod_season_no")]
-
-  # Filter the tickets by repeat customers, and filter the productions by at least 10 repeat customers
-  repeatCustomers = trainingTickets[,.N,by="group_customer_no"][N>1]
-  trainingTickets = trainingTickets[group_customer_no %in% repeatCustomers$group_customer_no] %>%
-    .[,N:=.N,by="prod_season_no"] %>% .[N>=10,.(prod_season_no,group_customer_no,T)]
+  # Filter the tickets by repeat customers, and filter the productions by
+  # least 10 repeat customers to limit noise
+  repeat_customers = training_tickets[,.N,by="group_customer_no"][N>1]
+  training_tickets = training_tickets[repeat_customers,on="group_customer_no"] %>%
+    .[,N:=.N,by="prod_season_no"] %>% .[N>10] %>% .[,N:=NULL]
 
   # Build table of customer attendance
-  productions_by_customer = trainingTickets %>% dcast(prod_season_no~group_customer_no,fill=F) %>%
-    .[,prod_season_no := as.integer(as.character(prod_season_no))]
-  # Build table of performance dates
-  production_dates = prodData[productions_by_customer,.(prod_season_no,as.integer(perf_dt)),on="prod_season_no"]
+  productions_by_customer = training_tickets %>%
+    dcast(prod_season_no~group_customer_no,value.var="T",fill=F)
+
+  productions_by_time = report$performances[,.(perf_dt=as.numeric(median(perf_dt))),
+                                            by="prod_season_no"]
 
   # Calculate distances
-  production_distance = parDist(x=as.matrix(productions_by_customer[,-1]) %>%
-                                  `rownames<-`(productions_by_customer[,1][[1]]),method="simpson")
-  production_time_distance = parDist(x=as.matrix(production_dates[,-1]) %>%
-                                       `rownames<-`(production_dates[,1][[1]]))
+  production_distance = parDist(
+    as.matrix(productions_by_customer,rownames = T),
+    method="simpson")
+  production_time_distance = parDist(
+    as.matrix(productions_by_time,rownames = T))
 
   # Time correction for production distance -- used a lm fit lm(log(1.00001-V1)~V2) to determine relationship between the time difference between the performances
   # and the simpson distance.
   #
-  production_distance2 = as.matrix(production_distance) %>%
-    `rownames<-`(productions_by_customer$prod_season_no) %>%
-    `colnames<-`(productions_by_customer$prod_season_no) %>% reshape2::melt(value.name="dist")
-  production_time_distance2 = as.matrix(production_time_distance) %>%
-    `rownames<-`(productions_by_customer$prod_season_no) %>%
-    `colnames<-`(productions_by_customer$prod_season_no) %>% reshape2::melt(value.name="time")
+  production_distance = as.matrix(production_distance) %>%
+    melt(value.name="dist",varnames = c("prod1","prod2"))
+  production_time_distance = as.matrix(production_time_distance) %>%
+    melt(value.name="time",varnames = c("prod1","prod2"))
 
-  dist_time = merge(production_distance2,production_time_distance2,by=c("Var1","Var2"))
-  sample_frac(dist_time,.1) %>% ggplot() + geom_density_2d_filled(aes(sqrt(time),boot::logit(dist)),bins=100) + theme(legend.position="none")
+  production_distance = merge(production_distance,production_time_distance)
+  dist_time_model = glm(dist~sqrt(time),data=production_distance,family="binomial")
 
-  # This regression is pretty stable across different subsets of seasons so let's just go with it.
-  linear_model = glm(dist~sqrt(time),data=dist_time,family="binomial")
-  summary(linear_model)
+  setDT(production_distance)
+  production_distance[,corr := stats::predict(dist_time_model,
+                                              newdata=.SD,type = "response")]
 
-  dist_time_corr = cbind(dist_time,corr=predict(linear_model,newdata=dist_time,type="response")) %>% setDT %>%
-    .[is.na(corr),corr:=0] %>%
-    .[is.na(dist),dist:=1] %>%
-    .[,dist := dist-corr+1]
-  # production_distance2_corr = as.matrix(production_distance_corr) %>%
-  #   `rownames<-`(productions_by_customer$prod_season_no) %>%
-  #   `colnames<-`(productions_by_customer$prod_season_no) %>% reshape2::melt(value.name="dist")
-  #dist_time_corr = merge(production_distance2_corr,production_time_distance2,by=c("Var1","Var2"))
+  production_distance_corr <- production_distance[,dist_corr :=
+      inv.logit(logit(dist)-logit(corr))] %>%
+    dcast(prod1~prod2,value.var="dist_corr") %>%
+    as.matrix(rownames=T) %>% as.dist
 
-  sample_frac(dist_time_corr,.1) %>% ggplot() + geom_density_2d_filled(aes(sqrt(time),boot::logit(dist)),bins=100) +
-    theme(legend.position="none")
+  production_summary <- report$performances[,.(
+    prod_season_desc=first(prod_season_desc),
+    fyear=first(fyear)), by=prod_season_no]
 
-  production_distance_corr = dist_time_corr[,.(Var1,Var2,dist)] %>% dcast(Var1~Var2,value.var="dist") %>%
-    tibble::column_to_rownames("Var1") %>%
-    as.matrix %>% as.dist
+  report$production_clustering <- hclust(production_distance_corr,method="ward.D2")
+  report$production_clustering$labels = production_summary[data.table(
+    prod_season_no=as.integer(report$production_clustering$labels)),
+    prod_season_desc,
+    on="prod_season_no"]
 
-  cluster.ward = hclust(production_distance_corr,method="ward.D2")
-  #cluster.diana = cluster::diana(production_distance_corr)
-  #cluster.agnes = cluster::agnes(production_distance_corr)
-  #table(cutree(cluster.ward %>% as.dendrogram,12),productions$season)
+  report$production_groups <- cutree(clustering,12) %>%
+    data.table(group = ., prod_season_no = as.integer(names(.))) %>%
+    merge(production_summary)
 
-  production_groups <- data.frame(group = cutree(cluster.ward, 8)) %>%
-    tibble::rownames_to_column("prod_season_no") %>%
-    mutate(prod_season_no = as.integer(prod_season_no)) %>%
-    left_join(prodData,by="prod_season_no")
+  report$production_map <- cmdscale(production_distance_corr) %>%
+    as.data.table(keep.rownames = "prod_season_no") %>%
+    .[,prod_season_no := as.integer(prod_season_no)] %>%
+    merge(production_summary)
 
-  production_groups %>% split(.$group) %>% purrr::imap(\(data,i) {
-    paste(c(deparse1(data$perf_desc),
-            deparse1(data$prod_season_no)),
-          collapse = "\n")
-  }) %>% paste(collapse = "\n\n") %>%
-    stringr::str_replace_all("(\\d+)L(,|\\))","\\1\\2") %>%
-    stringr::str_replace_all("c\\(","(") %>%
-    write(filename_txt)
+  NextMethod()
 
-  cluster.ward$labels = prodData[match(cluster.ward$labels,prod_season_no),perf_desc]
-
-  prodMap <- cmdscale(production_distance_corr) %>% as.data.frame() %>% tibble::rownames_to_column("prod_season_no") %>%
-    mutate(prod_season_no=as.factor(prod_season_no)) %>%
-    merge(prodData,on="prod_season_no") %>%
-    merge(seasonData,on="prod_season_no") %>%
-    setDT
-
-  customerMap <- prodMap[tickets,,on=c("prod_season_no")][!is.na(V1)] %>%
-    .[,`:=`(mean_V1_0 = mean(V1),
-            mean_V2_0 = mean(V2),
-            error_0 = sum((mean(V1)-V1)^2 + (mean(V2)-V2)^2)/.N)] %>%
-    .[,`:=`(max_season_fyear=max(season_fyear),
-            mean_V1 = mean(V1),
-            mean_V2 = mean(V2),
-            error = (sum((mean(V1)-V1)^2 + (mean(V2)-V2)^2)+error_0)/(.N+1)),
-      by="group_customer_no"] %>%
-    .[,`:=`(N=.N),by="prod_season_no"]
 }
+
+#' @export
+write.performance_map <- function(report, ...) NextMethod()
 
 write.performance_map_report <- function(report) {
   #' \clearpage
@@ -173,5 +180,15 @@ write.performance_map_report <- function(report) {
     scale_y_continuous(trans = "reverse")+#, name = "avantgarde : traditional") +
     scale_fill_distiller(palette = "YlGnBu",labels = scales::percent)  +
     scale_alpha_identity()
+
+  production_groups %>% split(.$group) %>% purrr::imap(\(data,i) {
+    paste(c(deparse1(data$perf_desc),
+            deparse1(data$prod_season_no)),
+          collapse = "\n")
+  }) %>% paste(collapse = "\n\n") %>%
+    stringr::str_replace_all("(\\d+)L(,|\\))","\\1\\2") %>%
+    stringr::str_replace_all("c\\(","(") %>%
+    write(filename_txt)
+
 }
 

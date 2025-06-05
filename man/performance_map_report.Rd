@@ -3,28 +3,55 @@
 \docType{data}
 \name{performance_map_report}
 \alias{performance_map_report}
-\alias{read.performance_map_report}
-\alias{process.performance_map_report}
+\alias{read.performance_map}
+\alias{process.performance_map}
 \title{performance_map_report}
 \format{
-An object of class \code{performance_map} (inherits from \code{report}, \code{list}) of length 0.
+An object of class \code{performance_map} (inherits from \code{email_report}, \code{report}, \code{list}) of length 0.
 }
 \usage{
 performance_map_report
 
-\method{read}{performance_map_report}(report)
+\method{read}{performance_map}(
+  report,
+  since = Sys.Date() - 365 * 5,
+  until = Sys.Date() + 365,
+  filter_expr = NULL,
+  ...
+)
 
-\method{process}{performance_map_report}(report)
+\method{process}{performance_map}(report, n_clusters = 8, ...)
+}
+\arguments{
+\item{report}{\code{report} object}
+
+\item{since}{\code{POSIXct} performance data on/after this date will be returned}
+
+\item{until}{\code{POSIXct} performance data on/before this date will be returned}
+
+\item{filter_expr}{\code{expression} to use when filtering performances, i.e.
+\code{read_tessi("performances") \%>\% filter(!!filter_expr)}}
+
+\item{...}{not used}
+
+\item{n_clusters}{\code{integer} number of clusters to make}
 }
 \description{
 Hierarchical clustering of performances, using audience crossover
-data to calculate the effective "distance" between performances
-}
-\section{Methods (by generic)}{
+data to calculate the effective "distance" between performances.
 \itemize{
-\item \code{read(performance_map_report)}: read data for performance map
+\item Distance is calculated using Simpson's distance metric
+\item Distance is corrected by time using a binomial regression on time between
+performances
+\item Clustering is hierarchical using Ward D2 distance
+\item Mapping is classic multidimensional scaling, i.e. PCA
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{read(performance_map)}: read data for performance map
 
-\item \code{process(performance_map_report)}: analyze and cluster performances
+\item \code{process(performance_map)}: analyze and cluster performances
 
 }}
 \keyword{datasets}
