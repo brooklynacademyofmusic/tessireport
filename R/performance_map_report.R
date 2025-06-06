@@ -52,9 +52,9 @@ read.performance_map <- function(report,since = Sys.Date()-365*5,
 #' @describeIn performance_map_report analyze and cluster performances
 #' @importFrom data.table dcast
 #' @importFrom parallelDist parDist
-#' @importFrom reshape2 melt
 #' @importFrom boot logit inv.logit
 #' @importFrom stats cmdscale
+#' @importFrom dendextend cutree
 process.performance_map <- function(report, n_clusters = 8, ...) {
 
   # Limit this to real tickets and summarize
@@ -82,13 +82,13 @@ process.performance_map <- function(report, n_clusters = 8, ...) {
   production_time_distance = parDist(
     as.matrix(productions_by_time,rownames = T))
 
-  # Time correction for production distance -- used a lm fit lm(log(1.00001-V1)~V2) to determine relationship between the time difference between the performances
+  # Time correction for production distance -
+  # to determine relationship between the time difference between the performances
   # and the simpson distance.
-  #
   production_distance = as.matrix(production_distance) %>%
-    melt(value.name="dist",varnames = c("prod1","prod2"))
+    reshape2::melt(value.name="dist",varnames = c("prod1","prod2"))
   production_time_distance = as.matrix(production_time_distance) %>%
-    melt(value.name="time",varnames = c("prod1","prod2"))
+    reshape2::melt(value.name="time",varnames = c("prod1","prod2"))
 
   production_distance = merge(production_distance,production_time_distance)
   dist_time_model = glm(dist~sqrt(time),data=production_distance,family="binomial")
@@ -97,98 +97,90 @@ process.performance_map <- function(report, n_clusters = 8, ...) {
   production_distance[,corr := stats::predict(dist_time_model,
                                               newdata=.SD,type = "response")]
 
+  # Adjust the distance by the the correction
   production_distance_corr <- production_distance[,dist_corr :=
       inv.logit(logit(dist)-logit(corr))] %>%
     dcast(prod1~prod2,value.var="dist_corr") %>%
     as.matrix(rownames=T) %>% as.dist
 
-  production_summary <- report$performances[,.(
+
+  # Prepare output
+  report$production_summary <- report$performances[,.(
     prod_season_desc=first(prod_season_desc),
-    fyear=first(fyear)), by=prod_season_no]
+    perf_dt=median(perf_dt)), by=prod_season_no]
 
-  report$production_clustering <- hclust(production_distance_corr,method="ward.D2")
-  report$production_clustering$labels = production_summary[data.table(
-    prod_season_no=as.integer(report$production_clustering$labels)),
-    prod_season_desc,
-    on="prod_season_no"]
+  # Clustering
+  clustering <- hclust(production_distance_corr,method="ward.D2")
 
-  report$production_groups <- cutree(clustering,12) %>%
+  report$production_groups <- cutree(clustering,n_clusters,
+                                     order_clusters_as_data=F) %>%
     data.table(group = ., prod_season_no = as.integer(names(.))) %>%
-    merge(production_summary)
+    merge(report$production_summary)
 
   report$production_map <- cmdscale(production_distance_corr) %>%
     as.data.table(keep.rownames = "prod_season_no") %>%
     .[,prod_season_no := as.integer(prod_season_no)] %>%
-    merge(production_summary)
+    merge(report$production_summary)
+
+  clustering$labels = report$production_summary[data.table(
+    prod_season_no=as.integer(clustering$labels)),
+    prod_season_desc,
+    on="prod_season_no"]
+  report$production_clustering <- clustering
 
   NextMethod()
 
 }
 
+#' @param highlight_since `POSIXct` performances on/after this date will be highlighted in the returned plots
 #' @export
-write.performance_map <- function(report, ...) NextMethod()
+#' @importFrom stats as.dendrogram
+#' @importFrom dendextend color_labels color_branches cutree
+#' @importFrom ggplot2 scale_color_brewer ggplot aes geom_point theme_minimal
+#' scale_x_continuous scale_y_continuous scale_color_manual scale_alpha_manual
+#' @importFrom colorspace diverging_hsv
+#' @importFrom ggrepel geom_text_repel
+#' @describeIn performance_map_report write pdf of performance maps and an file for importing into Tessitura
+write.performance_map <- function(report, n_clusters = 8, highlight_since = Sys.Date() - 365, ...) {
 
-write.performance_map_report <- function(report) {
-  #' \clearpage
-  #' ###### Family tree of 20FY-25FY performances
-  #' 25FY performances are marked in bold
-  #+ dendrogram, echo = FALSE, fig.width = 14, fig.height = 7.5
+  palette <- if(n_clusters <= 8) {
+    scale_color_brewer(palette=2,type="qual")$palette
+  } else {
+    rainbow_hcl
+  }
 
-  cluster.ward %>% as.dendrogram %>%
-    color_labels(k=8,col=scale_color_brewer(palette=2,type="qual",direction = -1)$palette) %>%
-    color_branches(k=8,col=scale_color_brewer(palette=2,type="qual",direction = -1)$palette) %>%
-    dendextend::set("by_labels_branches_lwd",prodData[seasonData[season_fyear=="25FY"],
-                                                      perf_desc,on="prod_season_no"]) %>%
-    dendextend::set("labels_cex",.4) %>% plot
+  highlight <- report$performances[perf_dt>highlight_since,
+                                   unique(prod_season_desc)]
+  report$production_map[,highlight := prod_season_desc %in% highlight]
 
-  #' \clearpage
-  #' ###### Scatterplot of 20FY-25FY Lives (Metric Multidimensional Scaling)
-  #' 25FY is marked with triangles
-  #+ scatter 1, echo = FALSE, fig.width = 14, fig.height = 7.5
+  report$report_filename <- write_pdf({
+    pdf_plot(title = "Family tree of performances",
+             subtitle = paste("Performances since",format(highlight_since,"%D"),"are marked in bold"),
+             report$production_clustering %>% as.dendrogram %>%
+               color_labels(k=n_clusters,col=palette) %>%
+               color_branches(k=n_clusters,col=palette) %>%
+               dendextend::set("by_labels_branches_lwd",highlight) %>%
+               dendextend::set("labels_cex",.4) %>%
+               plot)
 
-  prodMap %>%
-    ggplot(aes(V1,V2,size=inventory,color=as.factor(cutree(cluster.ward,8,order_clusters_as_data = FALSE)[perf_desc]))) +
-    geom_point(aes(shape=season_fyear=="25FY",
-                   alpha=if_else(season_fyear=="25FY",1,.5))) +
-    geom_text_repel(aes(label=perf_desc),cex=1,max.overlaps=25) +
-    theme_minimal(base_size = 8) + theme(legend.position = "none") +
-    scale_x_continuous(trans = "reverse")+#, name = "theater : dance") +
-    scale_y_continuous(trans = "reverse")+#, name = "avantgarde : traditional") +
-    scale_colour_brewer(palette=2,type="qual",direction = -1) +
-    scale_size_continuous(trans="sqrt") +
-    scale_alpha_identity()
+    pdf_plot(title = "Scatterplot of performance (PCA)",
+             subtitle = paste("Performances since",format(highlight_since,"%D"),"are marked with triangles"),
+             report$production_map %>%
+                ggplot(aes(V1,V2,
+                           color=as.factor(cutree(report$production_clustering,
+                                                  n_clusters,
+                                                  order_clusters_as_data=F)[prod_season_desc]))) +
+                geom_point(aes(shape=highlight,
+                               alpha=highlight)) +
+                geom_text_repel(aes(label=prod_season_desc),cex=1,max.overlaps=25) +
+                theme_minimal(base_size = 8) + theme(legend.position = "none") +
+                scale_color_manual(values = palette(n_clusters)) +
+                scale_alpha_manual(values = c(.5,1)))
 
-  #' \clearpage
-  #' ###### Customer heatmap for Live performance 20FY-25FY
-  #' Customers who bought tickets to NWF 25FY are most interested in shows in the bright hex boxes
-  #+ heatmap,  echo = FALSE, fig.width = 14, fig.height = 7.5
+    report$production_groups %>% split(.$group) %>% purrr::walk(~print(pdf_table(.)))
+  })
 
-  customerMap %>%
-    filter(group_customer_no %in% customerMap[season_fyear == "25FY",group_customer_no] &
-             season_fyear < "25FY") %>%
-    ggplot(aes(V1,V2)) +
-    geom_hex(aes(weight=1/inventory),bins=c(20,10)) +
-
-    geom_point(data=prodMap,
-               aes(V1,V2,color=as.factor(cutree(cluster.ward,8,order_clusters_as_data = FALSE)[perf_desc]),
-                   shape=season_fyear=="25FY",
-                   alpha=if_else(season_fyear=="25FY",1,.5))) +
-    geom_text_repel(data=prodMap,aes(label=perf_desc),color="black",cex=1,max.overlaps=25) +
-
-    theme_minimal(base_size = 8) + theme(legend.position = "none") +
-    scale_x_continuous(trans = "reverse")+#, name = "theater : dance") +
-    scale_y_continuous(trans = "reverse")+#, name = "avantgarde : traditional") +
-    scale_fill_distiller(palette = "YlGnBu",labels = scales::percent)  +
-    scale_alpha_identity()
-
-  production_groups %>% split(.$group) %>% purrr::imap(\(data,i) {
-    paste(c(deparse1(data$perf_desc),
-            deparse1(data$prod_season_no)),
-          collapse = "\n")
-  }) %>% paste(collapse = "\n\n") %>%
-    stringr::str_replace_all("(\\d+)L(,|\\))","\\1\\2") %>%
-    stringr::str_replace_all("c\\(","(") %>%
-    write(filename_txt)
+  NextMethod()
 
 }
 

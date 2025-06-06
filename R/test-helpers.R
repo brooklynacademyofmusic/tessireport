@@ -99,6 +99,26 @@ make_contributions_model_fixtures <- function(n = 10000, rebuild = FALSE) {
                 street2 = NULL,
                 subscriberid = NULL
                 )] %>% as.data.frame() %>%
-    arrow::write_parquet("tests/testthat/test-contributions_model.parquet")
+    arrow::write_parquet(rprojroot::find_testthat_root_file("test-contributions_model.parquet"))
+
+}
+
+
+# performance_map ---------------------------------------------------------
+
+make_performance_map_fixtures <- function(n = 10) {
+  withr::local_envvar(R_CONFIG_FILE="")
+
+  fixtures <- list()
+  fixtures$performances <- read_tessi("performances") %>% dplyr::slice_sample(n=n) %>%
+    collect %>% setDT
+  fixtures$order_detail <- read_tessi("order_detail", select = c(
+    "perf_desc","perf_dt","perf_no","seat_no","prod_season_no","customer_no")) %>%
+    filter(prod_season_no %in% fixtures$performances$prod_season_no) %>%
+    collect %>% setDT %>%
+    .[,`:=`(customer_no = rank(customer_no),
+            group_customer_no = rank(group_customer_no))]
+
+  saveRDS(fixtures, rprojroot::find_testthat_root_file("test-performance_map_report.Rds"))
 
 }

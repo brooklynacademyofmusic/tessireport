@@ -5,6 +5,7 @@
 \alias{performance_map_report}
 \alias{read.performance_map}
 \alias{process.performance_map}
+\alias{write.performance_map}
 \title{performance_map_report}
 \format{
 An object of class \code{performance_map} (inherits from \code{email_report}, \code{report}, \code{list}) of length 0.
@@ -21,6 +22,8 @@ performance_map_report
 )
 
 \method{process}{performance_map}(report, n_clusters = 8, ...)
+
+\method{write}{performance_map}(report, n_clusters = 8, highlight_since = Sys.Date() - 365, ...)
 }
 \arguments{
 \item{report}{\code{report} object}
@@ -35,6 +38,8 @@ performance_map_report
 \item{...}{not used}
 
 \item{n_clusters}{\code{integer} number of clusters to make}
+
+\item{highlight_since}{\code{POSIXct} performances on/after this date will be highlighted in the returned plots}
 }
 \description{
 Hierarchical clustering of performances, using audience crossover
@@ -52,6 +57,8 @@ performances
 \item \code{read(performance_map)}: read data for performance map
 
 \item \code{process(performance_map)}: analyze and cluster performances
+
+\item \code{write(performance_map)}: write pdf of performance maps and an file for importing into Tessitura
 
 }}
 \keyword{datasets}
