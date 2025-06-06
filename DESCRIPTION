@@ -21,17 +21,22 @@ Imports:
     base64enc,
     bbotk,
     bestNormalize,
+    boot,
     checkmate,
     cli,
+    colorspace,
     config,
     curl,
     data.table,
     DBI,
+    dendextend,
     dplyr,
     duckdb,
     furrr,
     future,
+    ggdendro,
     ggplot2,
+    ggrepel,
     httr,
     iml,
     kableExtra,
@@ -43,8 +48,10 @@ Imports:
     mlr3db,
     mlr3verse,
     openxlsx,
+    parallelDist,
     purrr,
     ranger,
+    reshape2,
     rlang,
     rmarkdown,
     sendmailR,
@@ -83,6 +90,7 @@ Collate:
     'p2_orphans_report.R'
     'p2_segments_and_tags.R'
     'pdf.R'
+    'performance_map_report.R'
     'senders.R'
     'sql_report.R'
     'tessireport-package.R'
