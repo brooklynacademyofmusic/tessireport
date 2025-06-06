@@ -7,7 +7,7 @@
 
 [![Codecov test
 coverage](https://codecov.io/gh/skysyzygy/tessireport/branch/master/graph/badge.svg)](https://codecov.io/gh/skysyzygy/tessireport?branch=master)
-[![R-CMD-check](https://github.com/skysyzygy/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/skysyzygy/tessireport/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 tessireport is a set of scripts for data hygiene in Tessitura, using

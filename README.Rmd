@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/skysyzygy/tessireport/branch/main/graph/badge.svg)](https://app.codecov.io/gh/skysyzygy/tessireport?branch=main)
-[![R-CMD-check](https://github.com/skysyzygy/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/skysyzygy/tessireport/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 tessireport is a set of scripts for prediction and auditing Tessitura, using data queried and cached by tessilake and processed by tessistream.
