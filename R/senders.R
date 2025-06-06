@@ -99,15 +99,19 @@ send_xlsx <- function(table,
 #' @export
 output.email_report <- function(report, report_filename = "filename", ...) {
   assert_character(report_filename, len = 1)
-  
-  if(is.null(report[[report_filename]]))
-     return(NULL)
-  assert_character(report[[report_filename]], len = 1)
-  assert_file_exists(report[[report_filename]])
 
-  send_file_args <- modifyList(list(name = class(report)[[1]]), list2(...))
+  if(!is.null(report[[report_filename]])) {
 
-  do.call(send_file, c(report[[report_filename]], send_file_args))
+    warning(paste("No filename defined for report",class(report)[[1]]))
+
+    assert_character(report[[report_filename]], len = 1)
+    assert_file_exists(report[[report_filename]])
+
+    send_file_args <- modifyList(list(name = class(report)[[1]]), list2(...))
+
+    do.call(send_file, c(report[[report_filename]], send_file_args))
+
+  }
 
   NextMethod()
 
