@@ -153,7 +153,7 @@ write.performance_map <- function(report, n_clusters = 8, highlight_since = Sys.
                                    unique(prod_season_desc)]
   report$production_map[,highlight := prod_season_desc %in% highlight]
 
-  report$report_filename <- write_pdf({
+  report$filename <- write_pdf({
     pdf_plot(title = "Family tree of performances",
              subtitle = paste("Performances since",format(highlight_since,"%D"),"are marked in bold"),
              report$production_clustering %>% as.dendrogram %>%
