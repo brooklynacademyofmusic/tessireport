@@ -68,3 +68,21 @@ test_that("send_xlsx calls send_email with the specified args", {
   expect_equal(mock_args(send_email)[[1]]$emails,"me@me.com")
   expect_match(names(mock_args(send_email)[[1]]$attachments),paste0("b_table_",Sys.Date(),".xlsx"))
 })
+
+# output.email_report -----------------------------------------------------
+
+test_that("output.email_report works with NSE in dots", {
+  send_file <- mock()
+  stub(output.email_report,"send_file",send_file)
+  stub(output.email_report,"assert_file_exists",T)
+  output(report(list(filename="test.txt"),"email_report"), nse_arg=nonexistent)
+  expect_length(mock_args(send_file),1)
+})
+
+test_that("output.email_report warns if there is no filename defined", {
+  send_file <- mock()
+  stub(output.email_report,"send_file",send_file)
+  stub(output.email_report,"assert_file_exists",T)
+  expect_warning(output(report(list(report_file="test.txt"),"email_report")),
+                 "No filename defined for report")
+})

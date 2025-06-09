@@ -102,15 +102,19 @@ output.email_report <- function(report, report_filename = "filename", ...) {
 
   if(!is.null(report[[report_filename]])) {
 
-    warning(paste("No filename defined for report",class(report)[[1]]))
-
     assert_character(report[[report_filename]], len = 1)
     assert_file_exists(report[[report_filename]])
 
-    send_file_args <- modifyList(list(name = class(report)[[1]]), list2(...))
+    send_file_args <- c(
+      name = class(report)[[1]],
+      filename = report[[report_filename]],
+      rlang::enexprs(...)[c(rlang::fn_fmls_names(send_file),
+                            rlang::fn_fmls_names(send_email))])
 
-    do.call(send_file, c(report[[report_filename]], send_file_args))
+    do.call(send_file, send_file_args)
 
+  } else {
+    warning(paste("No filename defined for report",class(report)[[1]]))
   }
 
   NextMethod()
