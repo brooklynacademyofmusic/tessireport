@@ -23,7 +23,7 @@ performance_map_report <- report(list(),c("performance_map","email_report"))
 #' @describeIn performance_map_report read data for performance map
 read.performance_map <- function(report,since = Sys.Date()-365*5,
                                         until = Sys.Date()+365,
-                                        filter = NULL, ...) {
+                                        filter_expr = NULL, ...) {
 
   filter_expr = rlang::enexpr(filter_expr)
 
