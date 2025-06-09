@@ -24,7 +24,7 @@ test_that("read.performance_map returns a subset of data based on filters", {
   expect_true(all(report$tickets$perf_dt <= quantile(perf_dts,.75)))
 
   report <- read(performance_map_report,
-                 filter_expr = quote(grepl("Opera",theater_desc)),
+                 filter_expr = grepl("Opera",theater_desc),
                  since = as.Date("1900-01-01"),
                  until = as.Date("2100-01-01"))
   expect_gt(report$performances[,.N],0)
