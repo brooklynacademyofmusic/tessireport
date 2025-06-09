@@ -108,8 +108,9 @@ output.email_report <- function(report, report_filename = "filename", ...) {
     send_file_args <- c(
       name = class(report)[[1]],
       filename = report[[report_filename]],
-      rlang::enexprs(...)[c(rlang::fn_fmls_names(send_file),
-                            rlang::fn_fmls_names(send_email))])
+      rlang::enexprs(...))[unique(
+        c(rlang::fn_fmls_names(send_file),
+          rlang::fn_fmls_names(send_email)))]
 
     do.call(send_file, send_file_args)
 
