@@ -85,5 +85,5 @@ test_that("write.performance_map writes out a pdf and is ready for emailing", {
       write(n_clusters=2),
     "non-integer")
 
-  expect_names(names(report),must.include="report_filename")
+  expect_names(names(report),must.include="filename")
 })
