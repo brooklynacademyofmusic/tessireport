@@ -2,7 +2,7 @@ pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-06-10T20:33Z
+last_built: 2025-06-10T20:40Z
 urls:
-  reference: https://github.com/brooklynacademyofmusic/tessireport/reference
-  article: https://github.com/brooklynacademyofmusic/tessireport/articles
+  reference: https://brooklynacademyofmusic.github.io/tessireport/reference
+  article: https://brooklynacademyofmusic.github.io/tessireport/articles
