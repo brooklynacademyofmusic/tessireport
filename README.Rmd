@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # tessireport
 
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/skysyzygy/tessireport/branch/main/graph/badge.svg)](https://app.codecov.io/gh/skysyzygy/tessireport?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/brooklynacademyofmusic/tessireport/branch/main/graph/badge.svg)](https://app.codecov.io/gh/brooklynacademyofmusic/tessireport?branch=main)
 [![R-CMD-check](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -28,7 +28,7 @@ You can install the latest version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("skysyzygy/tessireport")
+devtools::install_github("brooklynacademyofmusic/tessireport")
 ```
 ## Example
 

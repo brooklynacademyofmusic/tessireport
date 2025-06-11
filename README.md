@@ -6,12 +6,12 @@
 <!-- badges: start -->
 
 [![Codecov test
-coverage](https://codecov.io/gh/skysyzygy/tessireport/branch/master/graph/badge.svg)](https://codecov.io/gh/skysyzygy/tessireport?branch=master)
+coverage](https://codecov.io/gh/brooklynacademyofmusic/tessireport/branch/main/graph/badge.svg)](https://app.codecov.io/gh/brooklynacademyofmusic/tessireport?branch=main)
 [![R-CMD-check](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brooklynacademyofmusic/tessireport/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-tessireport is a set of scripts for data hygiene in Tessitura, using
-data queried and cached by tessilake and processed by tessistream.
+tessireport is a set of scripts for prediction and auditing Tessitura,
+using data queried and cached by tessilake and processed by tessistream.
 
 ## Installation
 
@@ -20,7 +20,7 @@ with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("skysyzygy/tessireport")
+devtools::install_github("brooklynacademyofmusic/tessireport")
 ```
 
 ## Example
